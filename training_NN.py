@@ -40,7 +40,7 @@ def train_model_Adam( model, train_data, label, max_epochs, lr, mini_batch_size,
         
     
     plt.figure()
-    plt.plot(np.arange(epoch)+1,training_errors)
+    plt.plot(np.arange(epoch+1)+1,training_errors)
     plt.xlabel('epoch')
     plt.ylabel('error [%]')
     plt.show()

@@ -141,7 +141,12 @@ def calcul_F1(mask, prediction):
             else:
                 FP = FP + 1
     
-    precision = TP/(TP+FP)
-    recall = TP/(TP+FN)
-    F1_score = 2*precision*recall / (precision+recall) 
+    F1_score = 0
+    if (TP+FP > 0) and (TP+FN > 0):
+        precision = TP/(TP+FP)
+        recall = TP/(TP+FN)
+        F1_score = 2*precision*recall / (precision+recall)
+    else:
+        print('Something goes wrong...')
+    
     return F1_score

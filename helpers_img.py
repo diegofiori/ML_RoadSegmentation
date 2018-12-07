@@ -156,14 +156,20 @@ def calcul_F1(mask, prediction):
     def create_submission(test_data, models, w, h, name_file, normalize=True):
     ''' the fonction takes as input the test data and the models used for prediction. 
     If a list of model is given, the prediction will be done with majority vote. 
-    Instead, if a single model is used the fonction simply gives its prediction.
+    
     The function is written explicitly for prediction using SimpleNet model.
     
-    test_data: tensor containig the data to test.
+    test_data: list of images.
     
     models: list of models or single model
     
     w, h: width and high of the patches'''
+    
+    # from list to Tensor
+    test_data = [img_crop(test_data[k], w, h) for k in range(len(test_data))]
+    
+    test_data = transform_subIMG_to_Tensor(test_data)
+    
     
     if normalize:
         

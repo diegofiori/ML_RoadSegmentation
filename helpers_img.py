@@ -7,6 +7,8 @@ from tqdm import tqdm
 from scipy import ndimage
 import torch.nn.functional as F
 import torch as tc
+from mask_to_submission import *
+
 
 # Helper functions
 
@@ -142,11 +144,54 @@ def calcul_F1(mask, prediction):
                 FP = FP + 1
     
     F1_score = 0
-    if (TP+FP > 0) and (TP+FN > 0):
+    try:
         precision = TP/(TP+FP)
         recall = TP/(TP+FN)
         F1_score = 2*precision*recall / (precision+recall)
-    else:
+    except:
         print('Something goes wrong...')
-    
+        
     return F1_score
+    
+    def create_submission(test_data, models, w, h, name_file, normalize=True):
+    ''' the fonction takes as input the test data and the models used for prediction. 
+    If a list of model is given, the prediction will be done with majority vote. 
+    Instead, if a single model is used the fonction simply gives its prediction.
+    The function is written explicitly for prediction using SimpleNet model.
+    
+    test_data: tensor containig the data to test.
+    
+    models: list of models or single model
+    
+    w, h: width and high of the patches'''
+    
+    if normalize:
+        
+        test_data = (test_data-test_data.mean())/test_data.std()
+    
+    try :
+        nb_models = len(models)
+        prediction = [] 
+        for i in range(nb_models):
+            models[i].eval()
+            prediction.append((models[i](test_data)).detach().numpy())
+            
+        prediction = np.array(prediction)
+        prediction = (prediction.sum(0)/nb_models > 0.5)*1
+    
+    except:
+        
+        prediction = models(test_data).detach().numpy()
+        
+        prediction = 1*(prediction > 0.5)
+     
+    prediction = prediction.reshape(-1,)
+    
+    nb_patches = 400*400/(w*h)
+    nb_images = prediction.shape[0]/nb_patches
+    # from patch to image
+    list_of_masks=[label_to_img(400, 400, w, h, prediction[i*nb_patches:(i+1)*nb_patches]) for i in range(0,nb_images)]
+        
+    
+    # create file submission
+    masks_to_submission(name_file, *list_of_masks)

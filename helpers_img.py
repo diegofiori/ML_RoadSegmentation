@@ -153,23 +153,23 @@ def calcul_F1(mask, prediction):
         
     return F1_score
     
-def create_submission(test_data, models, w, h, name_file, normalize=True):
-    '''the fonction takes as input the test data and the models used for prediction. 
+def create_submission(test_data, models, w, h, name_file, prediction_training_dir, normalize=True):
+    ''' the function takes as input the test data and the models used for prediction. 
     If a list of model is given, the prediction will be done with majority vote. 
     
     The function is written explicitly for prediction using SimpleNet model.
     
     test_data: list of images.
     
-    models: list of models or single model 
+    models: list of models or single model
     
-    w and h: width and high of the patches'''
+    w, h: width and high of the patches'''
     
-    
+    # from list to Tensor
+    w_im, h_im,_ = test_data[0].shape
     test_data = [img_crop(test_data[k], w, h) for k in range(len(test_data))]
     
     test_data = transform_subIMG_to_Tensor(test_data)
-    
     
     if normalize:
         
@@ -193,11 +193,16 @@ def create_submission(test_data, models, w, h, name_file, normalize=True):
      
     prediction = prediction.reshape(-1,)
     
-    nb_patches = 400*400/(w*h)
-    nb_images = prediction.shape[0]/nb_patches
+    nb_patches = int(w_im*h_im/(w*h))
+    nb_images =int(prediction.shape[0]/nb_patches)
+    list_of_mask = [prediction[i*nb_patches:(i+1)*nb_patches ] for i in range(nb_images)]
+    for k in range(len(list_of_mask)):
+        list_of_mask[k] = post_processing(list_of_mask[k],32,9,3,3)
     # from patch to image
-    list_of_masks=[label_to_img(400, 400, w, h, prediction[i*nb_patches:(i+1)*nb_patches]) for i in range(0,nb_images)]
-        
-    
+    list_of_masks=[label_to_img(w_im, h_im, w, h, list_of_mask[k]) for k in range(nb_images)]
+    list_of_string_names = []
+    for i,gt_image in enumerate(list_of_masks):
+        Image.fromarray(gt_image).save(prediction_training_dir + "prediction_" + str(i) + ".png")
+        list_of_string_names.append(prediction_training_dir +"prediction_" + str(i) + ".png")
     # create file submission
-    masks_to_submission(name_file, *list_of_masks)
+    masks_to_submission(name_file, *list_of_string_names)

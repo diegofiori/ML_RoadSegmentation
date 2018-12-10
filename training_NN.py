@@ -15,10 +15,16 @@ def train_model_Adam( model, train_data, label, max_epochs, lr, mini_batch_size,
     optimizer=tc.optim.Adam(model.parameters(),lr)
     criterion= tc.nn.MSELoss()
     training_errors=[]
-    
+    if tc.cuda.is_available():
+        model.cuda()
+        train_data = train_data.cuda()
+        label = label.cuda()
     
     for epoch in tqdm(range(max_epochs)):
         model.is_training=True
+        model.train()
+        if tc.cuda.is_available():
+            tc.cuda.empty_cache()
         for i in range(0,train_data.size(0),mini_batch_size):
             output= model(train_data.narrow(0,i,mini_batch_size))
             #print(output,tc.LongTensor(np.array([1*label[i:i+mini_batch_size]]).reshape(-1,1)))
@@ -28,7 +34,9 @@ def train_model_Adam( model, train_data, label, max_epochs, lr, mini_batch_size,
             optimizer.step()
         # compute training error
         model.is_training=False
+        model.eval()
         test = model(train_data)
+        test = test.cpu()
         prediction= test[:]>0.5
         
         prediction= 1*(prediction.numpy()[:] != label.reshape(-1,1)[:])

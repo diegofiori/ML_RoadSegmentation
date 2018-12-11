@@ -130,6 +130,14 @@ def make_img_overlay(img, predicted_img):
     overlay = Image.fromarray(color_mask, 'RGB').convert("RGBA")
     new_img = Image.blend(background, overlay, 0.2)
     return new_img
+
+def post_processing(label,threshold,size_min,verbarg,horbarg):
+    label = complete_lines(label,threshold)
+    label = remove_isolated_connected_component(label,size_min)
+    label = clean_garbage_vert(label,verbarg)
+    label = clean_garbage_hor(label,horbarg)
+    label = remove_isolated_connected_component(label,size_min)
+    return label
     
 def calcul_F1(mask, prediction):   
     '''compute the F1 error'''

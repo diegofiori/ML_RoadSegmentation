@@ -18,7 +18,6 @@ def train_model_Adam( model, train_data, label, max_epochs, lr, mini_batch_size,
     if tc.cuda.is_available():
         model.cuda()
         train_data = train_data.cuda()
-        label = label.cuda()
     
     for epoch in tqdm(range(max_epochs)):
         model.is_training=True
@@ -53,5 +52,5 @@ def train_model_Adam( model, train_data, label, max_epochs, lr, mini_batch_size,
     plt.ylabel('error [%]')
     plt.show()
         
-        
+    model.cpu()    
     

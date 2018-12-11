@@ -31,6 +31,8 @@ gt_imgs = [load_image(gt_dir + files[i]) for i in range(n)]
 
 # Rotate the images
 imgs,gt_imgs = rotation(imgs,gt_imgs)
+# Flip the imgs
+imgs,gt_imgs = flip(imgs,gt_imgs)
 # Add features
 imgs_augm=[add_features(imgs[i]) for i in range(len(imgs))]
 
@@ -54,7 +56,7 @@ Y = np.asarray([value_to_class(np.mean(gt_patches[i])) for i in range(len(gt_pat
 logreg = linear_model.LogisticRegression(C=1e5, class_weight="balanced")
 logreg.fit(X, Y)
 Z=logreg.predict(X)
-print('F1_score = ' + str(compute_F1(Y, Z)))
+print('F1_score on the training set= ' + str(compute_F1(Y, Z)))
 
 
 #

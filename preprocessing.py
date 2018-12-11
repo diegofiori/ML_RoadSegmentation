@@ -14,6 +14,13 @@ def rotation(orig, gts):
     gts=gts+gt_rotated
     return orig,gts
 
+def filp(orig,gts):
+    rotated=[cv2.flip(img,1) for img in orig for k in ks]
+    gt_rotated=[cv2.flip(gt_img,1) for gt_img in gts for k in ks]
+    orig=orig+rotated
+    gts=gts+gt_rotated
+    return orig,gts
+
 def add_gray_dimension(img):
     out=np.dot(img[...,:3], [0.299, 0.587, 0.114])
     shape_one=[out.shape[0], out.shape[1], 1]

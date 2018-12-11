@@ -75,4 +75,13 @@ def extract_features(img):
     feat = np.append(feat_m, feat_v)
     return feat
 
+def poly_features(feats,deg):
+    """
+    Performs feature augmentations by taking the polynomials and the interactions of the features.
+    """
+    poly = prp.PolynomialFeatures(deg)
+    feats = poly.fit_transform(feats.reshape(1,-1))
+    feats = feats.reshape(-1,)
+    return feats
+
 

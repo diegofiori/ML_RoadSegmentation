@@ -38,6 +38,13 @@ def concatenate_images(img, gt_img):
         cimg = np.concatenate((img8, gt_img_3c), axis=1)
     return cimg
 
+def value_to_class(v):
+    df = np.sum(v)
+    if df > foreground_threshold:
+        return 1
+    else:
+        return 0
+
 def img_crop(im, w, h):
     list_patches = []
     imgwidth = im.shape[0]

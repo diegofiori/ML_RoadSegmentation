@@ -28,8 +28,8 @@ def add_gray_dimension(img):
     return out
 
 def add_laplacian(img):
-    laplbew=ndimage.filters.laplace(add_gray_dimension(img))
-    lapl=ndimage.filters.laplace(img)
+    laplbew=ndimage.gaussian_laplace(add_gray_dimension(img),2)
+    lapl=ndimage.gaussian_laplace(img,2)
     return laplbew,lapl
 
 def add_sobel(img):
@@ -67,16 +67,6 @@ def add_features(img):
     return img
 
 def extract_features(img):
-    #gray_img = add_gray_dimension(img)
-    #sob = add_sobel(img)
-    #lapbew,lap=add_laplacian(img)
-    #seg=add_segment(img)
-    #img = np.concatenate((img, gray_img), axis = 2)
-    #img = np.concatenate((img, sob), axis = 2)
-    #img = np.concatenate((img, lapbew), axis = 2)
-    #img = np.concatenate((img, lap), axis = 2)    
-    #img = np.concatenate((img, seg), axis = 2)
-    
     feat_m = np.mean(img, axis=(0,1))
     feat_v = np.var(img, axis=(0,1))
     feat = np.append(feat_m, feat_v)

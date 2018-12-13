@@ -2,9 +2,11 @@ import matplotlib.image as mpimg
 import numpy as np
 import matplotlib.pyplot as plt
 import os,sys
+import cv2
 from scipy import ndimage
 from PIL import Image
 from helpers_img import *
+
 
 def rotation(orig, gts):
     ks=[90,180,270]
@@ -14,9 +16,9 @@ def rotation(orig, gts):
     gts=gts+gt_rotated
     return orig,gts
 
-def filp(orig,gts):
-    rotated=[cv2.flip(img,1) for img in orig for k in ks]
-    gt_rotated=[cv2.flip(gt_img,1) for gt_img in gts for k in ks]
+def flip(orig,gts):
+    rotated=[cv2.flip(img,1) for img in orig]
+    gt_rotated=[cv2.flip(gt_img,1) for gt_img in gts]
     orig=orig+rotated
     gts=gts+gt_rotated
     return orig,gts

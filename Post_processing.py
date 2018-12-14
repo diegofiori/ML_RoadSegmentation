@@ -1,3 +1,5 @@
+import numpy as np
+from scipy import ndimage
 '''Post Processing applied to our analysis'''
 
 def create_matrix(label):
@@ -20,7 +22,7 @@ def create_list(matrix_label):
     return label
 
 def complete_lines(label,threshold):
-    ''' The function controls for each columns and rows the number of road square. 
+    ''' The function controls for each columns and rows the number of road squares. 
         If the number is large (>= threshold), the entire column/row is labeled as ROAD.
         
         INPUT: list of label, the threshold
@@ -216,3 +218,152 @@ def clean_garbage_hor(label,max_distance, size_image):
     label = create_list(matrix_label)
     
     return label 
+
+
+def complete_lines_almostfull(label,max_zeros):
+    ''' The function controls for each non-road square its neighbors. 
+        If they are classified as ROAD with a certain pattern, the considered square is labeled as ROAD.
+        
+        INPUT: List of labels, the max_zeros
+        OUTPUT: New list of labels'''
+    
+    
+    # Create a matrix of label
+    matrix_label = create_matrix(label)   
+   
+    # Fix columns
+    rows,columns = matrix_label.shape
+    for column in range(columns):
+        count = 0
+        start = 0
+        end = 0
+        for row in range(rows):
+            if (matrix_label[row,column] == 1) and (start ==0):
+                start = 1
+            elif (matrix_label[row,column] == 1) and (start ==1) and (count>0):
+                end = 1
+            elif (matrix_label[row,column] == 0) and (start ==1) and (end==0):
+                count = count + 1
+            
+            if end ==1:
+                if count < max_zeros:
+                    matrix_label[row-count:row,column] = 1
+                start = 1
+                end = 0
+                count = 0
+    
+    # Fix rows
+    for row in range(rows):
+        count = 0
+        start = 0
+        end = 0
+        for column in range(columns):
+            if (matrix_label[row,column] == 1) and (start ==0):
+                start = 1
+            elif (matrix_label[row,column] == 1) and (start ==1) and (count>0):
+                end = 1
+            elif (matrix_label[row,column] == 0) and (start ==1) and (end==0):
+                count = count + 1
+            
+            if end ==1:
+                if count < max_zeros:
+                    matrix_label[row,column-count:column] = 1
+                start = 1
+                end = 0
+                count = 0
+    
+    
+    # Create the list
+    label = create_list(matrix_label)
+    
+    return label
+
+
+def clean_garbage_vert(label,max_distance, size_image):
+    ''' The function controls for each column, entirely labeled as road, its neighbors. 
+        If they are classified as noisy roads (SEE THE CODE FOR A BETTER UNDERSTANDING) they are set to 0
+        
+        INPUT: List of labels, the max_distance to be considered for the neighbors, the size of the considered image
+        OUTPUT: New list of labels'''
+    
+    # Create a matrix of label
+    matrix_label = create_matrix(label)   
+    
+    # Column with all one values
+    full_columns = np.where(matrix_label.sum(axis=0) == size_image)[0]
+    for column in full_columns:   
+        if (column < max_distance) and (matrix_label[:,column+1].sum(axis=0) < size_image):
+            count = matrix_label[:,column+1:column+max_distance+1].sum(axis=1)
+            for k in range(count.shape[0]):
+                if count[k] < max_distance:
+                    matrix_label[k,column+1:column+max_distance] = 0
+        
+        elif (column > size_image - max_distance) and (matrix_label[:,column-1].sum(axis=0) < size_image):
+            count = matrix_label[:,column-max_distance:column].sum(axis=1)
+            for k in range(count.shape[0]):
+                if count[k] < max_distance:
+                    matrix_label[k,column-max_distance:column] = 0
+        
+        elif (column >= max_distance) and (column <= size_image - max_distance):
+            if matrix_label[:,column+1].sum(axis=0) < size_image:
+                count = matrix_label[:,column+1:column+max_distance+1].sum(axis=1)
+                for k in range(count.shape[0]):
+                    if count[k] < max_distance:
+                        matrix_label[k,column+1:column+max_distance] = 0
+        
+            if matrix_label[:,column-1].sum(axis=0) < size_image:            
+                count = matrix_label[:,column-max_distance:column].sum(axis=1)
+                for k in range(count.shape[0]):
+                    if count[k] < max_distance:
+                        matrix_label[k,column-max_distance:column] = 0
+        
+  
+    # Create the list
+    label = create_list(matrix_label)
+    
+    return label    
+
+
+def complete_semilines(label,threshold, size_image):
+    ''' The function takes a column entirely labeled as row. Then for each row, the function splits that row
+        in a left row and right row (with respect to the previous column). Then if that "subrow" is sufficiently 
+        labeled as road (> a percentage of the total length of that "subrow") it is entirely classified as road
+        
+        INPUT: list of label, the percentage of the total length used as threshold, the size of the image
+        OUTPUT: the new list of label'''
+    
+    # Create a matrix of label
+    matrix_label = create_matrix(label)
+    
+    # Rows with all one values
+    full_rows = np.where(matrix_label.sum(axis=1) == size_image)[0]
+    for row in full_rows:   
+        for column in range(size_image):
+            if matrix_label[row+1:,column].sum() > np.abs(size_image-row)*threshold :
+                matrix_label[row+1:,column] = 1
+            if matrix_label[:row-1,column].sum() > np.abs(size_image-row)*threshold :
+                matrix_label[:row-1,column] = 1
+    
+    # Columns with all one values
+    full_columns = np.where(matrix_label.sum(axis=0) == size_image)[0]
+    for column in full_columns:   
+        for row in range(size_image):
+            if (column < size_image - 1) and (matrix_label[row,column+1:].sum() > np.abs(size_image-column)*threshold):
+                matrix_label[row,column+1:] = 1
+            if (column > 0) and (matrix_label[row,:column-1].sum() > np.abs(size_image-column)*threshold) :
+                matrix_label[row,:column-1] = 1
+                
+    
+    # Create the list
+    label = create_list(matrix_label)
+    
+    return label
+
+def post_processing(label,threshold,size_min,verbarg,horbarg,size_image):
+    label = complete_lines(label,threshold)
+    label = remove_isolated_connected_component(label,size_min)
+    label = clean_garbage_vert(label,verbarg,size_image)
+    label = clean_garbage_hor(label,horbarg,size_image)
+    label = remove_isolated_connected_component(label,size_min)
+    #label = complete_semilines(label,0.85, size_image)
+    return label

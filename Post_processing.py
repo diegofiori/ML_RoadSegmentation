@@ -371,6 +371,9 @@ def post_processing(label,threshold,size_min,verbarg,horbarg,size_image):
 def remove_border(imgs,new_size):
     old_size = imgs.shape[0]
     remove = int((old_size - new_size)/2)
-    imgs = imgs.reshape(old_size,old_size)
-    new_img = imgs[remove:-remove,remove:-remove]
+    if remove>0:
+        imgs = imgs.reshape(old_size,old_size)
+        new_img = imgs[remove:-remove,remove:-remove]
+    else:
+        new_img = imgs
     return new_img

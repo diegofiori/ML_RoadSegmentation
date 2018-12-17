@@ -102,3 +102,17 @@ def add_border(imgs,new_size):
     else:
         final = imgs
     return final
+
+def add_label_kmeans(path,n_cluster, max_iters, threshold):
+    """Using k-means to generate a new feature.
+       INPUT: path of the """
+    original_image = misc.imread(path)
+    x,y,z = original_image.shape
+    processed_image = original_image.reshape(x*y,z)
+    model = KMeans(n_clusters=n_cluster, random_state=2, init = 'k-means++', n_init = 2).fit(processed_image)
+    assignments = model.labels_
+    mu = model.cluster_centers_
+    new_image = processed_image.reshape(x,y,z)  
+    assignments = assignments.reshape(x,y)
+    final_img = np.concatenate((new_image,assignments[:,:,np.newaxis]),axis=2)
+    return final_img

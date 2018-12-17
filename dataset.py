@@ -125,16 +125,19 @@ class DatasetUNet(tc.utils.data.Dataset):
 
 
 class Testset(tc.utils.data.Dataset):
-    def __init__(self, root_dir, nb_test_imgs, do_prep = False, normalize=False):
+    def __init__(self, root_dir, nb_test_imgs, do_prep = False, normalize=False, expansion=False):
         self.root_dir = root_dir
         self.nb_test_imgs = nb_test_imgs
         self.normalize = normalize
         self.do_prep = do_prep
+        self.expansion = expansion
         
     def __getitem__(self,index):
         dir_test = self.root_dir + 'test_'+str(index+1)+'/'
         files_test = os.listdir(dir_test)
         img_test = load_image(dir_test + files_test[0])
+        if self.expansion:
+            img_test = add_border(img_test,630)
         original_img = img_test
         if self.do_prep:
             _, laplacian_image = add_laplacian(img_test)

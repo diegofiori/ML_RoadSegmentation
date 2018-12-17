@@ -368,9 +368,9 @@ def post_processing(label,threshold,size_min,verbarg,horbarg,size_image):
     #label = complete_semilines(label,0.85, size_image)
     return label
 
-
 def remove_border(imgs,new_size):
     old_size = imgs.shape[0]
     remove = int((old_size - new_size)/2)
-    new_img = imgs[remove:-remove,remove:-remove,:]
+    imgs = imgs.reshape(old_size,old_size)
+    new_img = imgs[remove:-remove,remove:-remove]
     return new_img

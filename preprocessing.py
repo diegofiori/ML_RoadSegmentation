@@ -85,7 +85,7 @@ def poly_features(feats,deg):
 
 def add_border(imgs,new_size):
     old_size = imgs.shape[0]
-    add = new_size-old_size
+    add = int((new_size-old_size)/2)
     new_im = imgs[:add,:,:]
     new_im = new_im[::-1,:,:]
     final_row = np.concatenate((new_im,imgs[:,:]),axis=0)

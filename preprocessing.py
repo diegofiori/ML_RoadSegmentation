@@ -66,6 +66,7 @@ def add_features(img):
     img = np.concatenate((img, lapbew), axis = 2)
     img = np.concatenate((img, lap), axis = 2)    
     img = np.concatenate((img, seg), axis = 2)
+    img = add_label_kmeans(img,25, 100, 1e-6)
     return img
 
 def extract_features(img):
@@ -103,10 +104,10 @@ def add_border(imgs,new_size):
         final = imgs
     return final
 
-def add_label_kmeans(path,n_cluster, max_iters, threshold):
+def add_label_kmeans(img,n_cluster, max_iters, threshold):
     """Using k-means to generate a new feature.
-       INPUT: path of the """
-    original_image = misc.imread(path)
+       INPUT: path of the image"""
+    original_image = img
     x,y,z = original_image.shape
     processed_image = original_image.reshape(x*y,z)
     model = KMeans(n_clusters=n_cluster, random_state=2, init = 'k-means++', n_init = 2).fit(processed_image)

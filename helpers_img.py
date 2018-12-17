@@ -130,6 +130,31 @@ def make_img_overlay(img, predicted_img):
     overlay = Image.fromarray(color_mask, 'RGB').convert("RGBA")
     new_img = Image.blend(background, overlay, 0.2)
     return new_img
+
+def compute_F1(Y,Z):
+    """
+    Compute F1 metric for predictions Z with test observations Y.
+    Input: Z, list of patches,
+           Y, true value assigned to the patch.
+    """
+    TN = 0
+    FP = 0
+    FN = 0
+    TP = 0
+    matrix = []
+    for i in range(len(Y)):
+        if (round(Y[i])==0) & (Z[i]==0):
+            TN = TN + 1
+        elif (round(Y[i])==1) & (Z[i]==0):
+            FN = FN + 1   
+        elif (round(Y[i])==1) & (Z[i]==1):
+            TP = TP + 1  
+        else:
+            FP = FP + 1
+
+    precision = TP/(TP+FP)
+    recall = TP/(TP+FN)
+    return 2*precision*recall / (precision+recall) 
     
 def calcul_F1(mask, prediction):   
     '''compute the F1 error'''

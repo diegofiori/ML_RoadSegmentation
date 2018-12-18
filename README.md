@@ -29,6 +29,7 @@ The files created and the functions developed are presented in the following sec
 
 ### <a name="helpers"></a>Helpers
 ```helpers_img.py```
+Contains the functions to load and read the data, perform basic procsseing of the images, compute the F1 score, and create the submission.
 
 ### <a name="prepr"></a>Preprocessing
 ```preprocessing.py```

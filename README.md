@@ -28,7 +28,10 @@ The files created and the functions developed are presented in the following sec
 * [Post Processing](#pp)
 
 ### <a name="helpers"></a>Helpers
+```helpers_img.py```
+
 ### <a name="prepr"></a>Preprocessing
+
 ### <a name="logistic"></a>Logistic Regression
 ### <a name="ridge"></a>Ridge Regression
 ### <a name="cnn"></a>Neural Nets

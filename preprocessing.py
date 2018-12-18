@@ -6,8 +6,9 @@ import cv2
 from scipy import ndimage
 from PIL import Image
 from helpers_img import *
+from sklearn.cluster import KMeans
 
-def rotation(orig, gts, diagonal=False):
+def rotation_local(orig, gts, diagonal=False):
     ks=[90,180,270]
     rotated=[ndimage.rotate(img,k) for img in orig for k in ks]
     gt_rotated=[ndimage.rotate(gt_img,k) for gt_img in gts for k in ks]
@@ -65,11 +66,11 @@ def add_features(img):
     sob = add_sobel(img)
     lapbew,lap=add_laplacian(img)
     seg=add_segment(img)
-    img = np.concatenate((img, gray_img), axis = 2)
+    #img = np.concatenate((img, gray_img), axis = 2)
     img = np.concatenate((img, sob), axis = 2)
     img = np.concatenate((img, lapbew), axis = 2)
     img = np.concatenate((img, lap), axis = 2)    
-    img = np.concatenate((img, seg), axis = 2)
+    #img = np.concatenate((img, seg), axis = 2)
     img = add_label_kmeans(img,25, 100, 1e-6)
     return img
 

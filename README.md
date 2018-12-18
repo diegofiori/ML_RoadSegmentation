@@ -9,7 +9,7 @@ Group members:
 
 CrowdAI team name: LaVolpeilFioreEilColosso
 
-### Architecture
+## Architecture
 
 A data folder with the following structure must be created:
 

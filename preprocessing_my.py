@@ -70,7 +70,7 @@ def add_label_kmeans(img,n_cluster, max_iters, threshold):
     original_image = img
     x,y,z = original_image.shape
     processed_image = original_image.reshape(x*y,z)
-    model = KMeans(n_clusters=n_cluster, random_state=2, init = 'k-means++', n_init = 2).fit(processed_image)
+    model = KMeans(n_clusters=n_cluster, random_state=2, init = 'k-means++', n_init = 5).fit(processed_image)
     assignments = model.labels_
     mu = model.cluster_centers_
     new_image = processed_image.reshape(x,y,z)  

@@ -13,16 +13,18 @@ from mask_to_submission import *
 # Helper functions
 
 def load_image(infilename):
+    """use the scipy.misc to load the image."""
     data = mpimg.imread(infilename)
     return data
 
 def img_float_to_uint8(img):
+    """COnvert image from float to int.????"""
     rimg = img - np.min(img)
     rimg = (rimg / np.max(rimg) * 255).round().astype(np.uint8)
     return rimg
 
-# Concatenate an image and its groundtruth
 def concatenate_images(img, gt_img):
+    '''Concatenate an image and its groundtruth'''
     nChannels = len(gt_img.shape)
     w = gt_img.shape[0]
     h = gt_img.shape[1]
@@ -39,6 +41,7 @@ def concatenate_images(img, gt_img):
     return cimg
 
 def value_to_class(v):
+    '''assign class'''
     df = np.sum(v)
     if df > foreground_threshold:
         return 1
@@ -46,6 +49,7 @@ def value_to_class(v):
         return 0
 
 def img_crop(im, w, h):
+    '''COMMENT'''
     list_patches = []
     imgwidth = im.shape[0]
     imgheight = im.shape[1]
@@ -59,13 +63,6 @@ def img_crop(im, w, h):
             list_patches.append(im_patch)
     return list_patches
 
-def rotation(orig, gts):
-    ks=[90,180,270]
-    rotated=[ndimage.rotate(img,k) for img in orig for k in ks]
-    gt_rotated=[ndimage.rotate(gt_img,k) for gt_img in gts for k in ks]
-    orig=orig+rotated
-    gts=gts+gt_rotated
-    return orig,gts
 
 def from_mask_to_vector(mask_imgs,threshold):
     '''the method takes as input a list of mask and return a vector where the ith component
@@ -91,6 +88,7 @@ def transform_subIMG_to_Tensor(sub_img_list):
 
 
 def reduce_dataset(dataset,label):
+    ''' Balance the number of zeros and ones in an image.'''
     new_dataset=[]
     new_label=[]
     nb_zeros=0
@@ -111,7 +109,8 @@ def reduce_dataset(dataset,label):
     return new_dataset,new_label
 
 def label_to_img(imgwidth, imgheight, w, h, labels):
-    im = np.zeros([imgwidth, imgheight])
+    '''Transform list of labels to image'''
+    m = np.zeros([imgwidth, imgheight])
     idx = 0
     for i in range(0,imgheight,h):
         for j in range(0,imgwidth,w):
@@ -120,6 +119,7 @@ def label_to_img(imgwidth, imgheight, w, h, labels):
     return im
 
 def make_img_overlay(img, predicted_img):
+    '''Combinate image and prediction'''
     w = img.shape[0]
     h = img.shape[1]
     color_mask = np.zeros((w, h, 3), dtype=np.uint8)
@@ -133,9 +133,9 @@ def make_img_overlay(img, predicted_img):
 
 def compute_F1(Y,Z):
     """
-    Compute F1 metric for predictions Z with test observations Y.
-    Input: Z, list of patches,
-           Y, true value assigned to the patch.
+    Compute F1 metric when inputs are LISTs
+    Input:  Y, true value assigned to the patch.
+            Z, list of prediction for patches
     """
     TN = 0
     FP = 0
@@ -152,12 +152,22 @@ def compute_F1(Y,Z):
         else:
             FP = FP + 1
 
-    precision = TP/(TP+FP)
-    recall = TP/(TP+FN)
-    return 2*precision*recall / (precision+recall) 
+    F1_score = 0
+    try:
+        precision = TP/(TP+FP)
+        recall = TP/(TP+FN)
+        F1_score = 2*precision*recall / (precision+recall)
+    except:
+        print('Something goes wrong...')
+    
+    return F1_score
     
 def calcul_F1(mask, prediction):   
-    '''compute the F1 error'''
+    """
+    Compute F1 metric when inputs are MATRICES
+    Input: mask, true values 
+           prediction, predicted values.
+    """
     TN = 0
     FP = 0
     FN = 0
@@ -204,37 +214,45 @@ def create_submission(test_data, models, w, h, name_file, prediction_training_di
     test_data = transform_subIMG_to_Tensor(test_data)
     
     if normalize:
-        
+        # Normalize
         test_data = (test_data-test_data.mean())/test_data.std()
     
+    # Try if you have only more than one model make the prediction, otherwise expect
     try :
         nb_models = len(models)
         prediction = [] 
+        # Calculate the prediction
         for i in range(nb_models):
             models[i].eval()
             prediction.append((models[i](test_data)).detach().numpy())
-            
+        
+        # Majority Vote    
         prediction = np.array(prediction)
         prediction = (prediction.sum(0)/nb_models > 0.5)*1
     
     except:
-        
+        # Calculate the prediction
         prediction = models(test_data).detach().numpy()
         
         prediction = 1*(prediction > 0.5)
      
     prediction = prediction.reshape(-1,)
     
+    # Create the prediction
     nb_patches = int(w_im*h_im/(w*h))
     nb_images =int(prediction.shape[0]/nb_patches)
     list_of_mask = [prediction[i*nb_patches:(i+1)*nb_patches ] for i in range(nb_images)]
+    
+    # Apply the post processing
     for k in range(len(list_of_mask)):
         list_of_mask[k] = post_processing(list_of_mask[k],32,9,3,3)
-    # from patch to image
+    
+    # From patch to image
     list_of_masks=[label_to_img(w_im, h_im, w, h, list_of_mask[k]) for k in range(nb_images)]
     list_of_string_names = []
     for i,gt_image in enumerate(list_of_masks):
         Image.fromarray(gt_image).save(prediction_training_dir + "prediction_" + str(i) + ".png")
         list_of_string_names.append(prediction_training_dir +"prediction_" + str(i) + ".png")
-    # create file submission
+    
+    # Create file submission
     masks_to_submission(name_file, *list_of_string_names)

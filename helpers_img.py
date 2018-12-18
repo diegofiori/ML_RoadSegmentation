@@ -110,6 +110,7 @@ def reduce_dataset(dataset,label):
 
 def label_to_img(imgwidth, imgheight, w, h, labels):
     '''Transform list of labels to image'''
+    im = np.zeros([imgwidth, imgheight])
     m = np.zeros([imgwidth, imgheight])
     idx = 0
     for i in range(0,imgheight,h):

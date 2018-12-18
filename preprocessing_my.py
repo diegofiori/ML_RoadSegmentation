@@ -8,6 +8,7 @@ from PIL import Image
 from helpers_img_my import *
 from sklearn import preprocessing as prp
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.cluster import KMeans
 
 
 def rotation(orig, gts, diagonal=False):

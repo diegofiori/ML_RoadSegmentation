@@ -1,0 +1,126 @@
+% ****** Start of file apssamp.tex ******
+%
+%   This file is part of the APS files in the REVTeX 4.1 distribution.
+%   Version 4.1r of REVTeX, August 2010
+%
+%   Copyright (c) 2009, 2010 The American Physical Society.
+%
+%   See the REVTeX 4 README file for restrictions and more information.
+%
+% TeX'ing this file requires that you have AMS-LaTeX 2.0 installed
+% as well as the rest of the prerequisites for REVTeX 4.1
+%
+% See the REVTeX 4 README file
+% It also requires running BibTeX. The commands are as follows:
+%
+%  1)  latex apssamp.tex
+%  2)  bibtex apssamp
+%  3)  latex apssamp.tex
+%  4)  latex apssamp.tex
+%
+\documentclass[%
+ reprint,
+%superscriptaddress,
+%groupedaddress,
+%unsortedaddress,
+%runinaddress,
+%frontmatterverbose, 
+%preprint,
+%showpacs,preprintnumbers,
+%nofootinbib,
+%nobibnotes,
+%bibnotes,
+ amsmath,amssymb,
+ aps,
+%pra,
+%prb,
+%rmp,
+%prstab,
+%prstper,
+%floatfix,
+]{revtex4-1}
+
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{bm}% bold math
+%\usepackage{hyperref}% add hypertext capabilities
+%\usepackage[mathlines]{lineno}% Enable numbering of text and display math
+%\linenumbers\relax % Commence numbering lines
+
+%\usepackage[showframe,%Uncomment any one of the following lines to test 
+%%scale=0.7, marginratio={1:1, 2:3}, ignoreall,% default settings
+%%text={7in,10in},centering,
+%%margin=1.5in,
+%%total={6.5in,8.75in}, top=1.2in, left=0.9in, includefoot,
+%%height=10in,a5paper,hmargin={3cm,0.8in},
+%]{geometry}
+
+\begin{document}
+
+\preprint{APS/123-QED}
+
+\title{Machine Learning CS-433: Project 2\\Road Segmentation}% Force line breaks with \\
+%\thanks{A footnote to the article title}%
+
+\author{Diego Fiori, Paolo Colusso, Valerio Volpe\\
+EPFL\\
+Instructors: Martin Jaggi, and Ruediger Urbanke}
+% \altaffiliation{Physics Department, XYZ University.}%Lines break automatically or can be forced with \\
+%\author{Second Author}%
+ %\email{Second.Author@institution.edu}
+%\affiliation{%
+% Authors' institution and/or address\\
+ %This line break forced with \textbackslash\textbackslash
+%}%
+
+
+
+\date{\today}% It is always \today, today,
+             %  but any date may be explicitly specified
+
+\begin{abstract}
+
+\textbf{Abstract.} The work applies selected machine learning algorithms to classify roads from a set of satellite images. Our approach involves two distinct models, logistic regression and neural nets, which share some preprocessing steps. Post-processing also turns out to be essential and some heuristics are applied to increase accuracy.  Emphasis is placed on feature augmentation, achieved by adding noise, filters and rotations and by taking polynomials, as well as on post-processing, based on road completion and the study of connected components. Results are different for the two methods, as we find neural networks over-perform logistic regression.
+\end{abstract}
+
+\pacs{Valid PACS appear here}% PACS, the Physics and Astronomy
+                             % Classification Scheme.
+%\keywords{Suggested keywords}%Use showkeys class option if keyword
+                              %display desired
+\maketitle
+
+%\tableofcontents
+
+\section{\label{sec:level1}Introduction}
+This work aims at finding a model which classifies road from background on a set of satellite/aerial images acquired from GoogleMaps. The dataset also includes ground-truth images with labels 1 for road and 0 for background. Machine Learning offers promising approaches which can be deployed to come up with novel solutions and we train two distinct models. A first solution exploits regularised logistic regression, while a second approach makes use of neural networks. Both of them makes extensive use of preprocessing steps, used to augment the space of features, and post-processing, which try to solve for unexpected patterns in the output of the classification algorithm.
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\label{sec:level1}Methods}
+
+\subsection{\label{sec:level2}Data Exploration} 
+The training dataset consists of 100 images as well as their ground-truth versions. Patches of 16x16 pixels were extracted and observations were obtained as the mean and variance of the channels on each patch. The target variable is set to \texttt{road=1} if more than 25\% of the pixels are 1 and \texttt{background=0} otherwise. 
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\label{sec:level2}Preprocessing} 
+We extend the dataset by rotating and flipping the images, increasing the number of images available by 8 times.\\
+As for the feature construction, starting from the three channels available (Red, Green and Blue), further channels are obtained by means of the following:
+\begin{itemize}
+\item image conversion to gray scale; 
+\item Sobel filter, used to sharpen the edges of the image;
+\item Gaussian-Laplacian filter, which is used for edge detection on the   blurred version of the image;
+\item segmented image, which creates a black and white, histogram-based segmented version of the image;
+\item clustered image, where colours are limited to a specified number based on K-mean clustering. 
+\end{itemize} 
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\label{sec:level2}Methods} 
+\subsubsection{Logistic regression}
+We perform a regularised logistic regression, where the regularising parameter $\lambda$ is set by a K-fold cross validation.\\
+After obtaining channels of the image as described in the previous section, features are constructed for each patch by computing the mean and variance of the channel values on the patch. To further expand the feature space, we take polynomials and interactions of the regressors.
+
+
+
+
+\end{document}

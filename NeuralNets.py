@@ -5,14 +5,7 @@ import numpy as np
 # Class to create the Simple-Net 
 class SimpleNet(tc.nn.Module):
     def __init__(self,dropout,features=3):
-        ''' In this constructor you can decide to do or not:
-            1. is_trainig:
-            2. conv1:
-            3. conv2: 
-            4. drop: normalize the tensor
-            5. fc1: add noise
-            6. fc2: 
-            '''
+        '''is_trainig:, conv1:, conv2:, drop:, fc1:,fc2:'''
         super(SimpleNet,self).__init__()
         self.is_training=False
         self.conv1=tc.nn.Conv2d(features,8,kernel_size=(5,5))

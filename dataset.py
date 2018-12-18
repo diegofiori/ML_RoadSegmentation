@@ -21,15 +21,8 @@ class DatasetUNet(tc.utils.data.Dataset):
     # Constructor of the class
     def __init__(self, root_dir, bound=None, do_prep=False, do_flip = False,
                  normalize = False, noise=False, is_simple_noise=False, rot = False):
-        ''' In this constructor you can decide to do or not:
-            1. bound:
-            2. do_prep: preprocessing
-            3. do_flip: flip images
-            4. normalize: normalize the tensor
-            5. noise: add noise
-            6. is_simple_noise:
-            7. rot: rotate images'''
-        
+        ''' bound=, do_prep: preprocessing, do_flip: flip images, normalize: normalize the tensor
+            noise: add noise, is_simple_noise:, rot: rotate images'''
         self.image_dir = root_dir + "images/"
         self.files = os.listdir(self.image_dir)
         self.gt_dir = root_dir + "groundtruth/"
@@ -150,10 +143,7 @@ class DatasetUNet(tc.utils.data.Dataset):
 class Testset(tc.utils.data.Dataset):
     # Constructor of the class
     def __init__(self, root_dir, nb_test_imgs, do_prep = False, normalize=False, expansion=False):
-         ''' In this constructor you can decide to do or not:
-             1. do_prep: preprocessing
-             2. normalize: normalize the tensor
-             3. expansion: reflect the border of image'''
+        '''Decide if you want or not...'''
         self.root_dir = root_dir
         self.nb_test_imgs = nb_test_imgs
         self.normalize = normalize

@@ -29,10 +29,19 @@ The files created and the functions developed are presented in the following sec
 
 ### <a name="helpers"></a>Helpers
 ```helpers_img.py```
+
 Contains the functions to load and read the data, perform basic procsseing of the images, compute the F1 score, and create the submission.
 
 ### <a name="prepr"></a>Preprocessing
 ```preprocessing.py```
+
+Contains the function to pre-process the images. A series of functions are created to:
+ * extend the dataset by means of rotation and flip
+ * extend the borders of the image
+ * apply filters on the images
+ * add channels to the image
+ * extract the features as mean and variance of the channels
+ * take features of the polynomials
 
 ### <a name="logistic"></a>Logistic Regression
 ### <a name="ridge"></a>Ridge Regression

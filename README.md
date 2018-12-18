@@ -31,11 +31,14 @@ The files created and the functions developed are presented in the following sec
 ```helpers_img.py```
 
 ### <a name="prepr"></a>Preprocessing
+```preprocessing.py```
 
 ### <a name="logistic"></a>Logistic Regression
 ### <a name="ridge"></a>Ridge Regression
 ### <a name="cnn"></a>Neural Nets
 ### <a name="pp"></a>Postprocessing
+```Post_processing.py```
+
 
 
 ## References

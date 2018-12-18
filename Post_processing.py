@@ -432,3 +432,14 @@ def remove_border(imgs,new_size):
     else:
         new_img = imgs
     return new_img
+
+def create_patches(label_matrix,patches_dimension,threshold):
+    num_patch = int(label_matrix.shape[0]/patches_dimension)
+    new_matrix = np.zeros((num_patch,num_patch))
+    for i in range(num_patch):
+        for j in range(num_patch):
+            new_matrix[i,j]=label_matrix[patches_dimension*i:patches_dimension*(i+1),
+                                        patches_dimension*j:patches_dimension*(j+1)].mean()
+    
+    new_matrix = 1*(new_matrix>=threshold)
+    return new_matrix

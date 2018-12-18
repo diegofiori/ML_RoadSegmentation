@@ -7,7 +7,7 @@ from scipy import ndimage
 from PIL import Image
 from helpers_img import *
 
-def rotation_local(orig, gts, diagonal=False):
+def rotation(orig, gts, diagonal=False):
     ks=[90,180,270]
     rotated=[ndimage.rotate(img,k) for img in orig for k in ks]
     gt_rotated=[ndimage.rotate(gt_img,k) for gt_img in gts for k in ks]

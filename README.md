@@ -58,10 +58,11 @@ Performs Ridge regression by cross-validation on the regularising paramete and o
 Computes the cross-validation F1.
 
 ### <a name="cnn"></a>Neural Nets
+
 ### <a name="pp"></a>Postprocessing
 ```Post_processing.py```
 
-
+Contains the functions which perform post-processing operations on the predictions obtained for the images from either of the models mentioned above.
 
 ## References
 

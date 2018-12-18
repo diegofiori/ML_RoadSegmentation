@@ -28,8 +28,14 @@ def complete_lines(label,threshold):
         INPUT: list of label, the threshold
         OUTPUT: the new list of label'''
     
-    # Create a matrix of label
-    matrix_label = create_matrix(label)
+    try:
+        # Create a matrix of label
+        matrix_label = create_matrix(label)
+        format_ = True
+    except:
+        # Create a matrix of label
+        matrix_label = label
+        format_ = False
     
     # Column with more than threshold ones are considered as ROAD
     matrix_label[:,np.where(matrix_label.sum(axis=0)>=threshold)[0]] = 1
@@ -38,8 +44,11 @@ def complete_lines(label,threshold):
     # Rows with more than threshold ones are considered as ROAD
     matrix_label[np.where(matrix_label.sum(axis=1)>=threshold)[0],:] = 1
     
-    # Create the list
-    label = create_list(matrix_label)
+    if format_:
+        # Create the list
+        label = create_list(matrix_label)
+    else:
+        label = matrix_label
     
     return label
 
@@ -51,8 +60,14 @@ def remove_isolated_connected_component(label,size_min):
         INPUT: list of label, the size_min
         OUTPUT: the new list of label'''
     
-    #Create a matrix of label
-    matrix_label = create_matrix(label)
+    try:
+        # Create a matrix of label
+        matrix_label = create_matrix(label)
+        format_ = True
+    except:
+        # Create a matrix of label
+        matrix_label = label
+        format_ = False
     
     # now identify the objects and remove those above a threshold
     Zlabeled,Nlabels = ndimage.measurements.label(matrix_label)
@@ -63,11 +78,13 @@ def remove_isolated_connected_component(label,size_min):
         if size < size_min:
             matrix_label[Zlabeled == label] = 0
     
-    # Create the list
-    label = create_list(matrix_label)
+    if format_:
+        # Create the list
+        label = create_list(matrix_label)
+    else:
+        label = matrix_label
     
     return label
-
 
 
 def complete_lines_almostfull(label,max_zeros):
@@ -78,9 +95,15 @@ def complete_lines_almostfull(label,max_zeros):
         OUTPUT: New list of labels'''
     
     
-    # Create a matrix of label
-    matrix_label = create_matrix(label)   
-   
+    try:
+        # Create a matrix of label
+        matrix_label = create_matrix(label)
+        format_ = True
+    except:
+        # Create a matrix of label
+        matrix_label = label
+        format_ = False
+    
     # Fix columns
     rows,columns = matrix_label.shape
     for column in range(columns):
@@ -122,9 +145,11 @@ def complete_lines_almostfull(label,max_zeros):
                 end = 0
                 count = 0
     
-    
-    # Create the list
-    label = create_list(matrix_label)
+    if format_:
+        # Create the list
+        label = create_list(matrix_label)
+    else:
+        label = matrix_label
     
     return label
 
@@ -137,8 +162,14 @@ def clean_garbage_vert(label,max_distance, size_image):
         INPUT: List of labels, the max_distance to be considered for the neighbors, the size of the considered image
         OUTPUT: New list of labels'''
     
-    # Create a matrix of label
-    matrix_label = create_matrix(label)   
+    try:
+        # Create a matrix of label
+        matrix_label = create_matrix(label)
+        format_ = True
+    except:
+        # Create a matrix of label
+        matrix_label = label
+        format_ = False
     
     # Column with all one values
     full_columns = np.where(matrix_label.sum(axis=0) == size_image)[0]
@@ -168,11 +199,13 @@ def clean_garbage_vert(label,max_distance, size_image):
                     if count[k] < max_distance:
                         matrix_label[k,column-max_distance:column] = 0
         
-  
-    # Create the list
-    label = create_list(matrix_label)
+    if format_:
+        # Create the list
+        label = create_list(matrix_label)
+    else:
+        label = matrix_label
     
-    return label    
+    return label
 
 
 def clean_garbage_hor(label,max_distance, size_image):
@@ -182,8 +215,14 @@ def clean_garbage_hor(label,max_distance, size_image):
         INPUT: List of labels, the max_distance to be considered for the neighbors, the size of the considered image
         OUTPUT: New list of labels'''
     
-    # Create a matrix of label
-    matrix_label = create_matrix(label)
+    try:
+        # Create a matrix of label
+        matrix_label = create_matrix(label)
+        format_ = True
+    except:
+        # Create a matrix of label
+        matrix_label = label
+        format_ = False
     
     # Column with all one values
     full_rows = np.where(matrix_label.sum(axis=1) == size_image)[0]
@@ -213,11 +252,13 @@ def clean_garbage_hor(label,max_distance, size_image):
                     if count[k] < max_distance:
                         matrix_label[row-max_distance:row,k] = 0
         
+    if format_:
+        # Create the list
+        label = create_list(matrix_label)
+    else:
+        label = matrix_label
     
-    # Create the list
-    label = create_list(matrix_label)
-    
-    return label 
+    return label
 
 
 def complete_lines_almostfull(label,max_zeros):
@@ -227,10 +268,15 @@ def complete_lines_almostfull(label,max_zeros):
         INPUT: List of labels, the max_zeros
         OUTPUT: New list of labels'''
     
+    try:
+        # Create a matrix of label
+        matrix_label = create_matrix(label)
+        format_ = True
+    except:
+        # Create a matrix of label
+        matrix_label = label
+        format_ = False
     
-    # Create a matrix of label
-    matrix_label = create_matrix(label)   
-   
     # Fix columns
     rows,columns = matrix_label.shape
     for column in range(columns):
@@ -272,9 +318,11 @@ def complete_lines_almostfull(label,max_zeros):
                 end = 0
                 count = 0
     
-    
-    # Create the list
-    label = create_list(matrix_label)
+    if format_:
+        # Create the list
+        label = create_list(matrix_label)
+    else:
+        label = matrix_label
     
     return label
 
@@ -286,8 +334,14 @@ def clean_garbage_vert(label,max_distance, size_image):
         INPUT: List of labels, the max_distance to be considered for the neighbors, the size of the considered image
         OUTPUT: New list of labels'''
     
-    # Create a matrix of label
-    matrix_label = create_matrix(label)   
+    try:
+        # Create a matrix of label
+        matrix_label = create_matrix(label)
+        format_ = True
+    except:
+        # Create a matrix of label
+        matrix_label = label
+        format_ = False
     
     # Column with all one values
     full_columns = np.where(matrix_label.sum(axis=0) == size_image)[0]
@@ -316,12 +370,14 @@ def clean_garbage_vert(label,max_distance, size_image):
                 for k in range(count.shape[0]):
                     if count[k] < max_distance:
                         matrix_label[k,column-max_distance:column] = 0
-        
-  
-    # Create the list
-    label = create_list(matrix_label)
     
-    return label    
+    if format_:
+        # Create the list
+        label = create_list(matrix_label)
+    else:
+        label = matrix_label
+    
+    return label
 
 
 def complete_semilines(label,threshold, size_image):
@@ -332,8 +388,14 @@ def complete_semilines(label,threshold, size_image):
         INPUT: list of label, the percentage of the total length used as threshold, the size of the image
         OUTPUT: the new list of label'''
     
-    # Create a matrix of label
-    matrix_label = create_matrix(label)
+    try:
+        # Create a matrix of label
+        matrix_label = create_matrix(label)
+        format_ = True
+    except:
+        # Create a matrix of label
+        matrix_label = label
+        format_ = False
     
     # Rows with all one values
     full_rows = np.where(matrix_label.sum(axis=1) == size_image)[0]
@@ -353,19 +415,12 @@ def complete_semilines(label,threshold, size_image):
             if (column > 0) and (matrix_label[row,:column-1].sum() > np.abs(size_image-column)*threshold) :
                 matrix_label[row,:column-1] = 1
                 
+    if format_:
+        # Create the list
+        label = create_list(matrix_label)
+    else:
+        label = matrix_label
     
-    # Create the list
-    label = create_list(matrix_label)
-    
-    return label
-
-def post_processing(label,threshold,size_min,verbarg,horbarg,size_image):
-    label = complete_lines(label,threshold)
-    label = remove_isolated_connected_component(label,size_min)
-    label = clean_garbage_vert(label,verbarg,size_image)
-    label = clean_garbage_hor(label,horbarg,size_image)
-    label = remove_isolated_connected_component(label,size_min)
-    #label = complete_semilines(label,0.85, size_image)
     return label
 
 def remove_border(imgs,new_size):

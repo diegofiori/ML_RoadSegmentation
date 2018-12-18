@@ -7,13 +7,17 @@ from scipy import ndimage
 from PIL import Image
 from helpers_img import *
 
-
-def rotation(orig, gts):
+def rotation_local(orig, gts, diagonal=False):
     ks=[90,180,270]
     rotated=[ndimage.rotate(img,k) for img in orig for k in ks]
     gt_rotated=[ndimage.rotate(gt_img,k) for gt_img in gts for k in ks]
     orig=orig+rotated
     gts=gts+gt_rotated
+    if diagonal:
+        rotated=[ndimage.rotate(img,45,reshape=False,mode='reflect') for img in orig]
+        gt_rotated = [ndimage.rotate(gt_img,45,reshape=False,mode='reflect') for gt_img in gts]
+        orig = orig + rotated
+        gts = gts + gt_rotated  
     return orig,gts
 
 def flip(orig,gts):

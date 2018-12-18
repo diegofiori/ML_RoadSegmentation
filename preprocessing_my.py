@@ -63,6 +63,20 @@ def add_segment(im):
     close_img=add_gray_dimension(close_img)
     return close_img
 
+def add_label_kmeans(img,n_cluster, max_iters, threshold):
+    """Using k-means to generate a new feature.
+       INPUT: path of the image"""
+    original_image = img
+    x,y,z = original_image.shape
+    processed_image = original_image.reshape(x*y,z)
+    model = KMeans(n_clusters=n_cluster, random_state=2, init = 'k-means++', n_init = 2).fit(processed_image)
+    assignments = model.labels_
+    mu = model.cluster_centers_
+    new_image = processed_image.reshape(x,y,z)  
+    assignments = assignments.reshape(x,y)
+    final_img = np.concatenate((new_image,assignments[:,:,np.newaxis]),axis=2)
+    return final_img
+
 def add_features(img):
     gray_img = add_gray_dimension(img)
     sob = add_sobel(img)

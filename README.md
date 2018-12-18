@@ -14,8 +14,8 @@ CrowdAI team name: LaVolpeilFioreEilColosso
 A data folder with the following structure must be created:
 
 ```
-data/training/
-    /test_set_images/
+training/
+test_set_images/
 ```
 
 The files created and the functions developed are presented in the following sections:
@@ -44,6 +44,12 @@ Contains the function to pre-process the images. A series of functions are creat
  * take features of the polynomials
 
 ### <a name="logistic"></a>Logistic Regression
+```cv_logistic.py.py```
+
+Performs regularised logistic regression by cross-validation on the regularising parameter.
+
+Computes the cross-validation F1.
+
 ### <a name="ridge"></a>Ridge Regression
 ### <a name="cnn"></a>Neural Nets
 ### <a name="pp"></a>Postprocessing

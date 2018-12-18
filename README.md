@@ -44,13 +44,19 @@ Contains the function to pre-process the images. A series of functions are creat
  * take features of the polynomials
 
 ### <a name="logistic"></a>Logistic Regression
-```cv_logistic.py.py```
+```cv_logistic.py```
 
 Performs regularised logistic regression by cross-validation on the regularising parameter.
 
 Computes the cross-validation F1.
 
 ### <a name="ridge"></a>Ridge Regression
+```cv_ridge.py```
+
+Performs Ridge regression by cross-validation on the regularising paramete and on the threshold which determines whether the prediction is set to 0 or 1.
+
+Computes the cross-validation F1.
+
 ### <a name="cnn"></a>Neural Nets
 ### <a name="pp"></a>Postprocessing
 ```Post_processing.py```

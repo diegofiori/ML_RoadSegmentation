@@ -423,17 +423,19 @@ def complete_semilines(label,threshold, size_image):
     
     return label
 
-def remove_border(imgs,new_size):
-    old_size = imgs.shape[0]
+def remove_border(img,new_size):
+    ''' Reduce the size of an img to new size'''
+    old_size = img.shape[0]
     remove = int((old_size - new_size)/2)
     if remove>0:
-        imgs = imgs.reshape(old_size,old_size)
-        new_img = imgs[remove:-remove,remove:-remove]
+        img = img.reshape(old_size,old_size)
+        new_img = img[remove:-remove,remove:-remove]
     else:
-        new_img = imgs
+        new_img = img
     return new_img
 
 def create_patches(label_matrix,patches_dimension,threshold):
+    ''' From a matrix of pixel to a matrix of patch '''
     num_patch = int(label_matrix.shape[0]/patches_dimension)
     new_matrix = np.zeros((num_patch,num_patch))
     for i in range(num_patch):

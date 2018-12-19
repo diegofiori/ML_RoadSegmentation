@@ -33,7 +33,6 @@ def flip(orig,gts):
 
 def expand(orig,gts):
     ks=[45,90,135]
-    for k in ks:
     rotated=[ndimage.rotate(img,k) for k in ks for img in orig]
     gt_rotated=[ndimage.rotate(gt_img,k) for k in ks for gt_img in gts]
     flipped=[cv2.flip(img,1) for img in orig]
@@ -96,11 +95,11 @@ def add_features(img):
     sob = add_sobel(img)
     lapbew,lap=add_laplacian(img)
     seg=add_segment(img)
-    img = np.concatenate((img, gray_img), axis = 2)
+    #img = np.concatenate((img, gray_img), axis = 2)
     img = np.concatenate((img, sob), axis = 2)
     img = np.concatenate((img, lapbew), axis = 2)
     img = np.concatenate((img, lap), axis = 2)    
-    img = np.concatenate((img, seg), axis = 2)
+    #img = np.concatenate((img, seg), axis = 2)
     return img
 
 def extract_features(img):

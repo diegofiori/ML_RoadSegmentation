@@ -12,9 +12,9 @@ from sklearn.cluster import KMeans
 
 
 def rotation(orig, gts, diagonal=False):
-    ks=[90,180,270]
-    rotated=[ndimage.rotate(img,k) for img in orig for k in ks]
-    gt_rotated=[ndimage.rotate(gt_img,k) for gt_img in gts for k in ks]
+    ks=[45,90,135]
+    rotated=[ndimage.rotate(img,k) for k in ks for img in orig]
+    gt_rotated=[ndimage.rotate(gt_img,k) for k in ks for gt_img in gts]
     orig=orig+rotated
     gts=gts+gt_rotated
     if diagonal:
@@ -29,6 +29,19 @@ def flip(orig,gts):
     gt_rotated=[cv2.flip(gt_img,1) for gt_img in gts]
     orig=orig+rotated
     gts=gts+gt_rotated
+    return orig,gts
+
+def expand(orig,gts):
+    ks=[45,90,135]
+    for k in ks:
+    rotated=[ndimage.rotate(img,k) for k in ks for img in orig]
+    gt_rotated=[ndimage.rotate(gt_img,k) for k in ks for gt_img in gts]
+    flipped=[cv2.flip(img,1) for img in orig]
+    gt_flipped=[cv2.flip(gt_img,1) for gt_img in gts]
+    orig=orig+rotated
+    orig=orig+flipped
+    gts=gts+gt_rotated
+    gts=gts+gt_flipped
     return orig,gts
 
 def add_gray_dimension(img):

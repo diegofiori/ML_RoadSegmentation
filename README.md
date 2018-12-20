@@ -47,9 +47,9 @@ Contains the function to pre-process the images. A series of functions are creat
 
 Tools to perform regression with cross validation. Contains the function used to:
  + split the data into train and test set
- + preprocess the data
+ + call the preprocessing functions
  + perform regression
- + post-process the data
+ + call the post-processing functions
  
 ```Cross_Validation_regression.ipynb```
 

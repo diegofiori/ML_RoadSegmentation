@@ -10,6 +10,7 @@ import torch as tc
 from mask_to_submission import *
 
 
+
 # Helper functions
 
 def load_image(infilename):
@@ -63,6 +64,19 @@ def img_crop(im, w, h):
             list_patches.append(im_patch)
     return list_patches
 
+def img_crop_mod(im, w, h):
+    list_patches = []
+    imgwidth = im.shape[0]
+    imgheight = im.shape[1]
+    is_2d = len(im.shape) < 3
+    for i in range(h,imgheight-h,h):
+        for j in range(w,imgwidth-w,w):
+            if is_2d:
+                im_patch = im[j-w:j+2*w, i-h:i+2*h]
+            else:
+                im_patch = im[j-w:j+2*w, i-h:i+2*h, :]
+            list_patches.append(im_patch)
+    return list_patches
 
 def from_mask_to_vector(mask_imgs,threshold):
     '''the method takes as input a list of mask and return a vector where the ith component
@@ -257,3 +271,4 @@ def create_submission(test_data, models, w, h, name_file, prediction_training_di
     
     # Create file submission
     masks_to_submission(name_file, *list_of_string_names)
+

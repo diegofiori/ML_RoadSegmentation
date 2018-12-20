@@ -11,6 +11,7 @@ import torch.nn.functional as F
 import torch as tc
 from torch.utils.data import DataLoader
 from torch.utils.data import TensorDataset
+from torch.utils.data import Dataset
 from helpers_img import *
 from NeuralNets import *
 from training_NN import *
@@ -208,3 +209,73 @@ class Testset(tc.utils.data.Dataset):
         else:
             features = 3
         return features
+
+class DatasetDeepNet(Dataset):
+    def __init__(self,root_dir, do_flip=False, do_rotation=False,do_train=False):
+        self.image_dir = root_dir + "images/"
+        self.files = os.listdir(self.image_dir)
+        self.gt_dir = root_dir + "groundtruth/"
+        self.rot_len=0
+        self.flip_len=0
+        self.train = do_train
+        self.initial_len=len(self.files)
+        # rotation
+        if do_rotation:
+            self.rot_len= len(self.files)
+            self.files = [*self.files*4]
+        #flip 
+        if do_flip:
+            self.flip_len=len(self.files)
+            self.files= [*self.files*2]
+        
+        
+    def __len__(self):
+        return len(self.files)
+    
+    def __getitem__(self,index):
+        image = [load_image(self.image_dir + self.files[index])]
+        gt_image = [load_image(self.gt_dir + self.files[index])]
+        if self.rot_len>0:
+            image,gt_image = rotation(image,gt_image)
+        if self.flip_len>0:
+            image,gt_image = flip(image,gt_image)
+        
+        i = index//self.initial_len
+        image,gt_image = image[i],gt_image[i]
+        image = add_border(image,432)
+        train_sub_images = [img_crop_mod(image, 16, 16)]
+        train_mask_label = [img_crop(gt_image,16,16)]
+        train_mask_label = from_mask_to_vector(train_mask_label,0.25)
+        train_sub_images = transform_subIMG_to_Tensor(train_sub_images)
+        mean = train_sub_images.mean()
+        std = train_sub_images.std()
+        train_sub_images = (train_sub_images-mean)/std
+        if self.train:
+            train_sub_images, train_mask_label = reduce_dataset(train_sub_images,train_mask_label)
+            for l in range(10):
+                new_indices= np.random.permutation(len(train_mask_label))
+                train_sub_images=train_sub_images[new_indices]
+                train_mask_label=train_mask_label[new_indices]
+            
+        return train_sub_images, 1*train_mask_label
+    
+class TestsetDeepNet(Dataset):
+    def __init__(self,root_dir, nb_test):
+        self.root_dir = root_dir
+        self.nb_test = nb_test
+    def __len__(self):
+        return self.nb_test
+    
+    def __getitem__(self,index):
+        dir_test = self.root_dir + 'test_'+str(index+1)+'/'
+        files_test = os.listdir(dir_test)
+        img_test = load_image(dir_test + files_test[0])
+        original_img = img_test
+        img_test = add_border(img_test,608+32)
+        img_test=[img_crop_mod(img_test, 16, 16)]
+        img_test=transform_subIMG_to_Tensor(img_test)
+        img_test = (img_test-img_test.mean())/img_test.std()
+        return img_test,original_img
+        
+        
+        

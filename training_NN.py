@@ -141,3 +141,51 @@ def train_UNet(training_directory, lr, max_epochs, mini_batch_size, nb_test, thr
     except:
         print(training_errors)
     return model
+def train_model_Adam_v2( model, dataset, max_epochs, lr, mini_batch_size, w=48, h=48, features=3, threshold=0.01):
+    '''train the Neural Net using Adam as optimizer and an binary cross entropy loss.
+    The function is written explicitly for the DeepNet.'''
+    
+    train_loader = DataLoader(dataset,batch_size=mini_batch_size)
+    optimizer=tc.optim.Adam(model.parameters(),lr)
+    criterion= tc.nn.BCELoss()
+    losses=[]
+    training_errors = []
+    if tc.cuda.is_available():
+        model.cuda()
+        criterion.cuda()
+    
+    for epoch in tqdm(range(max_epochs)):
+        model.is_training=True
+        model.train()
+    
+        for train_data,label in train_loader:
+            train_data = train_data.view(-1,features,w,h)
+            label = label.view(-1,1).type(tc.FloatTensor)
+            if tc.cuda.is_available():
+                train_data = train_data.cuda()
+                label = label.cuda()
+            output= model(train_data).view(-1,1)
+            #print(output,tc.LongTensor(np.array([1*label[i:i+mini_batch_size]]).reshape(-1,1)))
+            loss= criterion(output,label)
+            model.zero_grad()
+            loss.backward()
+            optimizer.step()
+        losses.append(loss)
+        
+    plt.figure()
+    plt.plot(np.arange(epoch+1)+1,losses)
+    plt.xlabel('epoch')
+    plt.ylabel('loss')
+    plt.show()
+    
+    model.cpu()    
+    return model
+
+def trainDeepNet(root_dir, max_epochs, lr, mini_batch_size, dropout=0, model = None):
+    if model == None:
+        model = DeepNet(dropout)
+    
+    dataset = DatasetDeepNet(root_dir, do_flip=True, do_rotation=True,do_train=False)
+    
+    model = train_model_Adam_v2( model, dataset, max_epochs, lr, mini_batch_size)
+    return model

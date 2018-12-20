@@ -31,6 +31,31 @@ def print_image_test(test_path, img_nb, model, do_prep=True):
     plt.figure(figsize=(10,10))
     plt.imshow(image)
 
+def plot_image(root_dir, nb_image, model):
+    ''' plot the desired image from the test set.
+    root_dir: test images directory
+    nb_image: nb of the desired image
+    model: model already trained'''
+    dataset = TestsetDeepNet(root_dir,50)
+    image, original = dataset.__getitem__(nb_image)
+    if tc.cuda.is_available():
+        model.cuda()
+        image=image.cuda()
+    model.eval()
+    prediction = model(image).detach().cpu().numpy().reshape(-1,)
+    prediction = 1*(prediction>0.5)
+    model.cpu()
+    print(prediction.shape)
+    prediction = label_to_img(608, 608, 16, 16, prediction)
+    #prediction=post_processing(prediction,32,9,3,3)
+    
+    original  = make_img_overlay(original, prediction)
+    
+    plt.figure(figsize=(10,10))
+    plt.imshow(original)
+
+    
+
 def test_on_image(test_path, img_nb, model, do_prep=True):
     ''' take a 608 * 608 image'''
     dataset = Testset(test_path, 50, do_prep = do_prep, normalize=True)

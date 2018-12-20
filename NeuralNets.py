@@ -110,3 +110,47 @@ class UNet(tc.nn.Module):
         x_new = tc.cat((x_old,x_new),dim=1)
         
         return x_new
+    
+    
+class DeepNet(tc.nn.Module):
+    def __init__(self,dropout,features=3):
+        super(DeepNet,self).__init__()
+        self.conv1=tc.nn.Conv2d(features,32,kernel_size=(3,3))
+        self.pool1= tc.nn.MaxPool2d(kernel_size = (2,2))
+        self.drop1=tc.nn.Dropout(dropout)
+        self.batch1=tc.nn.BatchNorm2d(32)
+        self.conv2=tc.nn.Conv2d(32,64,kernel_size=(4,4))
+        self.pool2 = tc.nn.MaxPool2d(kernel_size = (2,2))
+        self.drop2=tc.nn.Dropout(dropout)
+        self.batch2=tc.nn.BatchNorm2d(64)
+        self.conv3=tc.nn.Conv2d(64,128,kernel_size=(3,3))
+        self.pool3= tc.nn.MaxPool2d(kernel_size = (2,2))
+        self.drop3=tc.nn.Dropout(dropout)
+        self.batch3=tc.nn.BatchNorm2d(128)
+        self.conv4=tc.nn.Conv2d(128,256,kernel_size=(3,3))
+        self.pool4 = tc.nn.MaxPool2d(kernel_size = (2,2))
+        self.drop4=tc.nn.Dropout(dropout)
+        self.batch4=tc.nn.BatchNorm2d(256)
+        self.fc1=tc.nn.Linear(256,256)
+        self.drop5 = tc.nn.Dropout(dropout)
+        self.fc2=tc.nn.Linear(256,1)
+
+    def forward(self,x):
+        x = F.relu(self.pool1(self.conv1(x)))
+        x = self.batch1(self.drop1(x))
+        x = F.relu(self.pool2(self.conv2(x)))
+        x = self.batch2(self.drop2(x))
+        
+        x = F.relu(self.pool3(self.conv3(x)))
+        x = self.batch3(self.drop3(x))
+        
+        x = F.relu(self.pool4(self.conv4(x)))
+        x = self.batch4(self.drop4(x))
+        
+        x = x.view(-1,256)
+        x = F.relu(self.fc1(x))
+        x = self.drop5(x)
+        x= tc.sigmoid(self.fc2(x))
+        #x = self.fc2(x)
+        return x
+    

@@ -10,6 +10,9 @@ from sklearn.cluster import KMeans
 from sklearn import preprocessing as prp
 
 def rotation(orig, gts, diagonal=False):
+    """
+    Performs the rotation of an image.
+    """
     ks=[90,180,270]
     rotated=[ndimage.rotate(img,k) for img in orig for k in ks]
     gt_rotated=[ndimage.rotate(gt_img,k) for gt_img in gts for k in ks]
@@ -23,6 +26,9 @@ def rotation(orig, gts, diagonal=False):
     return orig,gts
 
 def flip(orig,gts):
+    """
+    Flips an image.
+    """
     rotated=[cv2.flip(img,1) for img in orig]
     gt_rotated=[cv2.flip(gt_img,1) for gt_img in gts]
     orig=orig+rotated
@@ -30,23 +36,35 @@ def flip(orig,gts):
     return orig,gts
 
 def add_gray_dimension(img):
+    """
+    Obtains the grayscale channel of an image.
+    """
     out=np.dot(img[...,:3], [0.299, 0.587, 0.114])
     shape_one=[out.shape[0], out.shape[1], 1]
     out = np.reshape(out, shape_one)
     return out
 
 def add_laplacian(img):
+    """
+    Obtains the Gaussian-Laplacian filter of an image, both coloured and in grayscale.
+    """
     laplbew=ndimage.gaussian_laplace(add_gray_dimension(img),2)
     lapl=ndimage.gaussian_laplace(img,2)
     return laplbew,lapl
 
 def add_sobel(img):
+    """
+    Obtains the Sobel filter of an image.
+    """
     sx = ndimage.sobel(img, axis=0, mode='constant')
     sy = ndimage.sobel(img, axis=1, mode='constant')
     sob = np.hypot(sx, sy)
     return sob
 
 def add_segment(im):
+    """
+    Obtains the histogram-based segmentation of an image.
+    """
     n = 10
     l = 256
     im = ndimage.gaussian_filter(im, sigma=l/(4.*n))
@@ -62,20 +80,41 @@ def add_segment(im):
     close_img=add_gray_dimension(close_img)
     return close_img
 
+def add_label_kmeans(img,n_cluster, max_iters, threshold):
+    """
+    Obtains a new channel to an image by KMeans clustering to reduce the number of colours.
+    """
+    original_image = img
+    x,y,z = original_image.shape
+    processed_image = original_image.reshape(x*y,z)
+    model = KMeans(n_clusters=n_cluster, random_state=2, init = 'k-means++', n_init = 2).fit(processed_image)
+    assignments = model.labels_
+    mu = model.cluster_centers_
+    new_image = processed_image.reshape(x,y,z)  
+    assignments = assignments.reshape(x,y)
+    final_img = np.concatenate((new_image,assignments[:,:,np.newaxis]),axis=2)
+    return final_img
+
 def add_features(img):
+    """
+    Adds the desired channels to the image img.
+    """
     gray_img = add_gray_dimension(img)
     sob = add_sobel(img)
     lapbew,lap=add_laplacian(img)
     seg=add_segment(img)
-    #img = np.concatenate((img, gray_img), axis = 2)
+    img = np.concatenate((img, gray_img), axis = 2)
     img = np.concatenate((img, sob), axis = 2)
     img = np.concatenate((img, lapbew), axis = 2)
     img = np.concatenate((img, lap), axis = 2)    
-    #img = np.concatenate((img, seg), axis = 2)
+    img = np.concatenate((img, seg), axis = 2)
     img = add_label_kmeans(img,25, 100, 1e-6)
     return img
 
 def extract_features(img):
+    """
+    Extract the features of an image as the mean and variance of each channel.
+    """
     feat_m = np.mean(img, axis=(0,1))
     feat_v = np.var(img, axis=(0,1))
     feat = np.append(feat_m, feat_v)
@@ -83,7 +122,7 @@ def extract_features(img):
 
 def poly_features(feats,deg):
     """
-    Performs feature augmentations by taking the polynomials and the interactions of the features.
+    Performs feature augmentations by taking the polynomials and the interactions of the features up to degree deg.
     """
     poly = prp.PolynomialFeatures(deg)
     feats = poly.fit_transform(feats.reshape(1,-1))
@@ -91,6 +130,9 @@ def poly_features(feats,deg):
     return feats
 
 def add_border(imgs,new_size):
+    """
+    Adds a border to an image by mirror boundary conditions.
+    """
     old_size = imgs.shape[0]
     add = int((new_size-old_size)/2)
     if add>0:
@@ -109,17 +151,3 @@ def add_border(imgs,new_size):
     else:
         final = imgs
     return final
-
-def add_label_kmeans(img,n_cluster, max_iters, threshold):
-    """Using k-means to generate a new feature.
-       INPUT: path of the image"""
-    original_image = img
-    x,y,z = original_image.shape
-    processed_image = original_image.reshape(x*y,z)
-    model = KMeans(n_clusters=n_cluster, random_state=2, init = 'k-means++', n_init = 2).fit(processed_image)
-    assignments = model.labels_
-    mu = model.cluster_centers_
-    new_image = processed_image.reshape(x,y,z)  
-    assignments = assignments.reshape(x,y)
-    final_img = np.concatenate((new_image,assignments[:,:,np.newaxis]),axis=2)
-    return final_img

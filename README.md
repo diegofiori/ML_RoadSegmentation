@@ -93,6 +93,6 @@ Submission ID Number: 25160
 
 + Image processing: Burger, Burge, *Digital Image Processing. An Algorithmic Introduction Using Java*, see [details](https://www.springer.com/de/book/9781447166832).
 
-+ Ronneberger, O., Fischer, P., and Brox, T., *U-Net: Convolutional Networks for Biomedical Image Segmentation*, 2015.
++ U-Net: Ronneberger, O., Fischer, P., and Brox, T., *U-Net: Convolutional Networks for Biomedical Image Segmentation*, 2015.
 
 + Neural nets: EPFL course available [here](https://fleuret.org/ee559-2018/dlc/).

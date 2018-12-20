@@ -78,6 +78,7 @@ Contains the functions which perform post-processing operations on the predictio
 
 ```mask_to_submission.py```
 ```submission.py```
+```submission_to_mask.py```
 
 ## CrowdAI results
 Username: Paolo Colusso

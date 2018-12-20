@@ -90,3 +90,44 @@ def create_submission_UNet(test_path, model, name_submission, do_preprocessing= 
         plt.imsave( "prediction_"+str(i+1)+".png", list_of_mask[i], cmap = matplotlib.cm.gray)
         list_of_names.append("prediction_"+str(i+1)+".png")
     masks_to_submission(name_submission, *list_of_names)
+
+def create_submission_DeepNet(root_dir, model, name_file, do_postprocess=False):
+    ''' the function takes as input the test data and the models used for prediction. 
+    If a list of model is given, the prediction will be done with majority vote. 
+    
+    The function is written explicitly for prediction using SimpleNet model.
+    
+    test_data: list of images.
+    
+    models: list of models or single model
+    
+    w, h: width and high of the patches'''
+    
+    # from list to Tensor
+    dataset = TestsetDeepNet(root_dir,50)
+    test_loader = DataLoader(dataset)
+    predictions = []
+    if tc.cuda.is_available():
+        model.cuda()
+    for test_data,_ in tqdm(test_loader):
+        test_data = test_data.view(-1,3,48,48)
+        if tc.cuda.is_available():
+            test_data=test_data.cuda()
+        prediction = model(test_data).detach().cpu().numpy()
+        
+        prediction = 1*(prediction > 0.5)
+     
+        predictions.append(prediction.reshape(-1,))
+    if do_postprocess:
+        for i in range(len(predictions)):
+            predictions[i]=complete_lines(predictions[i],35)
+            predictions[i] = remove_isolated_connected_component(predictions[i],3)
+
+    # from patch to image
+    list_of_masks=[label_to_img(608, 608, 16, 16, predictions[k]) for k in range(50)]
+    list_of_string_names = []
+    for i in range(50):
+        plt.imsave( "prediction_"+str(i+1)+".png", list_of_masks[i], cmap = matplotlib.cm.gray)
+        list_of_string_names.append("prediction_" + str(i+1) + ".png")
+    # create file submission
+    masks_to_submission(name_file, *list_of_string_names)

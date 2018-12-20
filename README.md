@@ -57,7 +57,7 @@ The following notebooks can be used to run the models:
 + Simple Net: ```Cross_Validation_regression.ipynb```
 + Net with bootstrapping: ```Cross_Validation_regression.ipynb```
 + U-Net: ```Cross_Validation_regression.ipynb```
-+ Deep Net: ```Cross_Validation_regression.ipynb```
++ Deep Net: ```RUN.ipynb```
 
 Folders with the models: ```Model_UNet.zip```,```Models_Bagging_Net.zip```,```Model_DeepNet.zip```
 

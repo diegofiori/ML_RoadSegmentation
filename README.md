@@ -53,6 +53,7 @@ Contains the function used to:
 
 ### <a name="cnn"></a>Neural Nets
 ```NeuralNets.py```: contains the classes fot the *Simple Net*, the *U-Net* and the *Deep Net*.
+
 ```Bagging_Net.py```: contains the functions used to run the bootstrap-like neural net.
 
 The following notebooks can be used to define and run the models:

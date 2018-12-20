@@ -57,10 +57,11 @@ Tools to perform regression with cross validation. Contains the function used to
  + performs ridge regression with cross-validation
 
 ### <a name="cnn"></a>Neural Nets
-+ Simple Net
-+ Net with bootstrapping
-+ U-Net
-+ Deep Net
++ Simple Net: ```Cross_Validation_regression.ipynb```
++ Net with bootstrapping: ```Cross_Validation_regression.ipynb```
++ U-Net: ```Cross_Validation_regression.ipynb```
++ Deep Net: ```Cross_Validation_regression.ipynb```
+
 Folders with the models: ```Model_UNet.zip```,```Models_Bagging_Net.zip```,```Model_DeepNet.zip```
 
 ### <a name="pp"></a>Postprocessing
@@ -69,8 +70,8 @@ Folders with the models: ```Model_UNet.zip```,```Models_Bagging_Net.zip```,```Mo
 Contains the functions which perform post-processing operations on the predictions obtained for the images from either of the models mentioned above.
 
 ## CrowdAI results
-Username:
-Submission ID Number:
+Username: Paolo Colusso
+Submission ID Number: 
 
 ## References
 

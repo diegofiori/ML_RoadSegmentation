@@ -11,13 +11,6 @@ CrowdAI team name: LaVolpeilFioreEilColosso
 
 ## Architecture
 
-A data folder with the following structure must be created:
-
-```
-training/
-test_set_images/
-```
-
 The files created and the functions developed are presented in the following sections:
 
 * [Helpers](#helpers)
@@ -45,7 +38,9 @@ Contains the function to pre-process the images. A series of functions are creat
 ### <a name="regression"></a>Logistic and Ridge Regression
 ```helpers_regression.py```
 
-Tools to perform regression with cross validation. Contains the function used to:
+Tools to perform regression with cross validation. 
+
+Contains the function used to:
  + split the data into train and test set
  + call the preprocessing functions
  + perform regression
@@ -57,11 +52,13 @@ Tools to perform regression with cross validation. Contains the function used to
  + performs ridge regression with cross-validation
 
 ### <a name="cnn"></a>Neural Nets
-```NeuralNets.py```: contains the classes fot the *Simple Net*, the *U-Net* and the *Deep Net*
+```NeuralNets.py```: contains the classes fot the *Simple Net*, the *U-Net* and the *Deep Net*.
+
+The following notebooks can be used to run the models:
 + Simple Net: ```Cross_Validation_regression.ipynb```
 + Net with bootstrapping: ```Cross_Validation_regression.ipynb```
 + U-Net: ```Cross_Validation_regression.ipynb```
-+ Deep Net: ```Cross_Validation_regression.ipynb```
++ Deep Net: ```RUN.ipynb```
 
 Folders with the models: ```Model_UNet.zip```,```Models_Bagging_Net.zip```,```Model_DeepNet.zip```
 
@@ -73,7 +70,7 @@ Contains the functions which perform post-processing operations on the predictio
 ## CrowdAI results
 Username: Paolo Colusso
 
-Submission ID Number: 
+Submission ID Number: 25160
 
 ## References
 

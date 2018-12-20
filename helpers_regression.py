@@ -73,7 +73,7 @@ def preprocessed(ims,gt_ims,patch_size,deg):
     gt_ims = np.asarray([value_to_class(np.mean(gt_ims[i])) for i in range(len(gt_ims))])
     return ims,gt_ims
     
-def cross_validation_logistic(lambdas,k_fold,trains,tests,ims,gt_ims):
+def cross_validation_logistic(lambdas,k_fold,trains,tests,ims,gt_ims,n):
     '''Return best lambda by cross validation
        Input: lambdas, list of lambda;
               k_fold: number of k_fold;
@@ -82,14 +82,14 @@ def cross_validation_logistic(lambdas,k_fold,trains,tests,ims,gt_ims):
               ims, set of images;
               gt_ims: set of ground-truth images;
        Output: best lambda.'''
-    n = len(ims)
+    p = ims.shape[1]
     for id_lam,lam in enumerate(lambdas):
         print('lambda: '+str(id_lam))
         nb_f1_te = np.zeros(k_fold)
         int_=0
         for train,test in zip(trains,tests):
             # Create a matrix for each patch of each image the list of features
-            im_tr = np.zeros((len(train)*625*8,325))
+            im_tr = np.zeros((len(train)*625*8,p))
             gt_tr = np.zeros((len(train)*625*8))
             inter = 0
             for idx in train:
@@ -104,7 +104,7 @@ def cross_validation_logistic(lambdas,k_fold,trains,tests,ims,gt_ims):
                     inter = inter + 1
             
             # Same for test
-            im_te = np.zeros((len(train)*625,325))
+            im_te = np.zeros((len(train)*625,p))
             gt_te = np.zeros((len(train)*625))
             inter = 0
             for idx in test:
@@ -134,7 +134,7 @@ def cross_validation_logistic(lambdas,k_fold,trains,tests,ims,gt_ims):
     best_lambda=lambdas[np.argmax(mean_f1)]
     return best_lambda
     
-def cross_validation_ridge(lambdas,thresh,k_fold,trains,tests,ims,gt_ims):
+def cross_validation_ridge(lambdas,thresh,k_fold,trains,tests,ims,gt_ims,n):
     '''Return best lambda and threshold by cross validation
        Input: lambdas, list of lambda;
               k_fold: number of k_fold;
@@ -143,7 +143,7 @@ def cross_validation_ridge(lambdas,thresh,k_fold,trains,tests,ims,gt_ims):
               ims, set of images;
               gt_ims: set of ground-truth images;
        Output: best lambda.'''
-    n = len(ims)
+    p = ims.shape[1]
     for id_lam,lam in enumerate(lambdas):
         print('lambda: '+str(id_lam))
         for id_t,t in enumerate(thresh):
@@ -152,7 +152,7 @@ def cross_validation_ridge(lambdas,thresh,k_fold,trains,tests,ims,gt_ims):
             ind=0
             for train,test in zip(trains,tests):
                 # Create a matrix for each patch of each image the list of features
-                im_tr = np.zeros((len(train)*625*8,325))
+                im_tr = np.zeros((len(train)*625*8,p))
                 gt_tr = np.zeros((len(train)*625*8))
                 inter = 0
                 for idx in train:
@@ -165,7 +165,7 @@ def cross_validation_ridge(lambdas,thresh,k_fold,trains,tests,ims,gt_ims):
                         gt_tr[625*inter:625*(inter+1)]=gt_temp
                         inter = inter + 1
             
-                im_te = np.zeros((len(train)*625,325))
+                im_te = np.zeros((len(train)*625,p))
                 gt_te = np.zeros((len(train)*625))
                 inter = 0
                 for idx in test:

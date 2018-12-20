@@ -67,7 +67,9 @@ The following notebooks can be used to define and run the models:
 + U-Net:  ```U-Net.ipynb```,
 + Deep Net: ```RUN.ipynb```
 
-Folder with the models created: ```Models```
+```training_nn.py```: contains the functions to train neural networks.
+
+ ```Models```: folder containing the the models created.
 
 ### <a name="pp"></a>Postprocessing
 ```Post_processing.py```

@@ -53,6 +53,7 @@ Contains the function used to:
 
 ### <a name="cnn"></a>Neural Nets
 ```NeuralNets.py```: contains the classes fot the *Simple Net*, the *U-Net* and the *Deep Net*.
+
 The following notebooks can be used to run the models:
 + Simple Net: ```Cross_Validation_regression.ipynb```
 + Net with bootstrapping: ```Cross_Validation_regression.ipynb```

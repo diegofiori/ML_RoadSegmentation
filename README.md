@@ -58,6 +58,11 @@ Tools to perform regression with cross validation. Contains the function used to
  + performs ridge regression with cross-validation
 
 ### <a name="cnn"></a>Neural Nets
+```Model_UNet.zip```
+
+```Models_Bagging_Net.zip```
+
+```Model_DeepNet.zip```
 
 ### <a name="pp"></a>Postprocessing
 ```Post_processing.py```

@@ -21,8 +21,13 @@ class DatasetUNet(tc.utils.data.Dataset):
     # Constructor of the class
     def __init__(self, root_dir, bound=None, do_prep=False, do_flip = False,
                  normalize = False, noise=False, is_simple_noise=False, rot = False):
-        ''' bound=, do_prep: preprocessing, do_flip: flip images, normalize: normalize the tensor
-            noise: add noise, is_simple_noise:, rot: rotate images'''
+        ''' bound: to take a subset of images; 
+            do_prep: preprocessing; 
+            do_flip: flip images; 
+            normalize: normalize the tensor;
+            noise: add noise; 
+            is_simple_noise: decide if add noise to original image or mask;
+            rot: rotate images;'''
         self.image_dir = root_dir + "images/"
         self.files = os.listdir(self.image_dir)
         self.gt_dir = root_dir + "groundtruth/"
@@ -37,15 +42,15 @@ class DatasetUNet(tc.utils.data.Dataset):
             del self.files[bound[1]:]
     
     def __len__(self):
-        '''Return the '''
+        ''' Return the images number'''
         return len(self.files)
     
     def true_len(self):
-        '''Return the '''
+        ''' Return the dataset length '''
         return len(self.files)*(1+3*self.rot)*(1+1*self.noise)*(1+1*self.do_flip)
     
     def __getitem__(self, index):
-        '''????'''
+        ''' Return an image'''
         # Load images
         image = load_image(self.image_dir + self.files[index])
         gt_image = load_image(self.gt_dir + self.files[index])
@@ -77,7 +82,7 @@ class DatasetUNet(tc.utils.data.Dataset):
         return image,gt_image
     
     def from_list_to_tensor(self,dataset):
-        ''' cast a list of image in a tensor of appropriate size'''
+        ''' Cast a list of image in a tensor of appropriate size'''
         dataset = np.array(dataset)
         try :
             N,rows,columns,features = dataset.shape
@@ -100,14 +105,13 @@ class DatasetUNet(tc.utils.data.Dataset):
 
         label : tensor type'''
 
-        # If SIMPLE MEANSSSS
+        # If simple
         if is_simple:
 
             mean, std = dataset.mean(), dataset.std()
             # The noise has the 20% of the image standard deviation
             noise = np.random.normal(loc = mean, scale = std/5, size = dataset.size())
 
-            #
             dataset_with_noise = dataset + tc.tensor(noise).type(tc.FloatTensor)
             dataset = tc.cat((dataset,dataset_with_noise),dim = 0)
             label = label.type(tc.FloatTensor)
@@ -136,14 +140,18 @@ class DatasetUNet(tc.utils.data.Dataset):
             features = 3
         return features
     def get_mini(self):
-        '''REREERER'''
+        ''' Return the number of images copy'''
         return (1+3*self.rot)*(1+1*self.do_flip)*(1+1*self.noise)
 
 # Class to create the dataset to test
 class Testset(tc.utils.data.Dataset):
     # Constructor of the class
     def __init__(self, root_dir, nb_test_imgs, do_prep = False, normalize=False, expansion=False):
-        '''Decide if you want or not...'''
+        ''' root_dir: set directory; 
+            nb_test_imgs: number of test images; 
+            do_prep: do preprocessing; 
+            normalize: normalize the tensor;
+            expansion: reflect border;'''
         self.root_dir = root_dir
         self.nb_test_imgs = nb_test_imgs
         self.normalize = normalize
@@ -151,6 +159,7 @@ class Testset(tc.utils.data.Dataset):
         self.expansion = expansion
         
     def __getitem__(self,index):
+        ''' Return an image'''
         # Load image
         dir_test = self.root_dir + 'test_'+str(index+1)+'/'
         files_test = os.listdir(dir_test)
@@ -172,7 +181,7 @@ class Testset(tc.utils.data.Dataset):
         return img_test, original_img
     
     def __len__(self):
-        ''' return '''
+        ''' Return the images number '''
         return self.nb_test_imgs
     
     def from_list_to_tensor(self,dataset):

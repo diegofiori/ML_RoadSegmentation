@@ -18,6 +18,8 @@ The files created and the functions developed are presented in the following sec
 * [Regression](#regression)
 * [Neural Nets](#cnn)
 * [Post Processing](#pp)
+* [Submission](#subm)
+
 
 ### <a name="helpers"></a>Helpers
 ```helpers_img.py```
@@ -71,6 +73,11 @@ Folder with the models created: ```Models```
 ```Post_processing.py```
 
 Contains the functions which perform post-processing operations on the predictions obtained for the images from either of the models mentioned above.
+
+### <a name="subm"></a>Submission
+
+```mask_to_submission.py```
+```submission.py```
 
 ## CrowdAI results
 Username: Paolo Colusso

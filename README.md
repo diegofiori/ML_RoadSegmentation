@@ -43,7 +43,7 @@ Contains the function to pre-process the images. A series of functions are creat
  * extract the features as mean and variance of the channels
  * take features of the polynomials
 
-### <a name="logistic"></a>Regression
+### <a name="logistic"></a>Logistic and Ridge Regression
 ```helpers_regression.py```
 
 Tools to perform regression with cross validation. Contains the function used to:

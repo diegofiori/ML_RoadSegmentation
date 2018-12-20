@@ -34,6 +34,10 @@ Contains the function to pre-process the images. A series of functions are creat
  * add channels to the image
  * extract the features as mean and variance of the channels
  * take features of the polynomials
+ 
+ ```dataset.py```
+
+Class used to read the set of images.
 
 ### <a name="regression"></a>Logistic and Ridge Regression
 ```helpers_regression.py```

@@ -57,6 +57,7 @@ Tools to perform regression with cross validation. Contains the function used to
  + performs ridge regression with cross-validation
 
 ### <a name="cnn"></a>Neural Nets
+```NeuralNets.py```: contains the classes fot the *Simple Net*, the *U-Net* and the *Deep Net*
 + Simple Net: ```Cross_Validation_regression.ipynb```
 + Net with bootstrapping: ```Cross_Validation_regression.ipynb```
 + U-Net: ```Cross_Validation_regression.ipynb```

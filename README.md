@@ -68,6 +68,10 @@ Tools to perform regression with cross validation. Contains the function used to
 
 Contains the functions which perform post-processing operations on the predictions obtained for the images from either of the models mentioned above.
 
+## CrowdAI results
+Username:
+Submission ID Number:
+
 ## References
 
 + Statistical learning: James, Witten, Hastie, Tibshirani, *Introduction to Statistical Learning*, see [details](https://www-bcf.usc.edu/~gareth/ISL/).

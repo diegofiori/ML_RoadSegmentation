@@ -67,7 +67,7 @@ def add_features(img):
     sob = add_sobel(img)
     lapbew,lap=add_laplacian(img)
     seg=add_segment(img)
-    img = np.concatenate((img, gray_img), axis = 2)
+    #img = np.concatenate((img, gray_img), axis = 2)
     img = np.concatenate((img, sob), axis = 2)
     img = np.concatenate((img, lapbew), axis = 2)
     img = np.concatenate((img, lap), axis = 2)    

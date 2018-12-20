@@ -143,6 +143,7 @@ def cross_validation_ridge(lambdas,thresh,k_fold,trains,tests,ims,gt_ims):
               ims, set of images;
               gt_ims: set of ground-truth images;
        Output: best lambda.'''
+    n = len(ims)
     for id_lam,lam in enumerate(lambdas):
         print('lambda: '+str(id_lam))
         for id_t,t in enumerate(thresh):

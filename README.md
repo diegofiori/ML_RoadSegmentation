@@ -56,7 +56,6 @@ Contains the function used to:
 ```Bagging_Net.py```: contains the functions used to run the bootstrap-like neural net.
 
 The following notebooks can be used to define and run the models:
-+ Simple Net: ```Cross_Validation_regression.ipynb```
 + Net with bootstrapping: ```Bagging_Net.ipynb```
 + U-Net:  ```U-Net.ipynb```,
 + Deep Net: ```RUN.ipynb```

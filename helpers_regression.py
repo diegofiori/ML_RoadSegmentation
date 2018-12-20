@@ -8,10 +8,10 @@ from sklearn.cluster import KMeans
 from sklearn import linear_model
 from sklearn import svm
 from sklearn import preprocessing as prp
-from helpers_img_my import *
+from helpers_img import *
 from Post_processing import *
 from sklearn import model_selection as modsel
-from preprocessing_my import *
+from preprocessing import *
 
 
 def post_processing(label,threshold,size_min,verbarg,horbarg,size_image):

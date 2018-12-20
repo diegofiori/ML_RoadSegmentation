@@ -54,16 +54,8 @@ Tools to perform regression with cross validation. Contains the function used to
  
 ```Cross_Validation_regression.ipynb```
 
-Performs regularised logistic regression by cross-validation on the regularising parameter.
-
-Computes the cross-validation F1.
-
-### <a name="ridge"></a>Ridge Regression
-```cv_ridge.py```
-
-Performs Ridge regression by cross-validation on the regularising paramete and on the threshold which determines whether the prediction is set to 0 or 1.
-
-Computes the cross-validation F1.
+ + performs regularised logistic regression with cross-validation
+ + performs ridge regression with cross-validation
 
 ### <a name="cnn"></a>Neural Nets
 

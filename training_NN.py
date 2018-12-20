@@ -12,11 +12,11 @@ from dataset import *
 
 def train_model_Adam( model, train_data, label, max_epochs, lr, mini_batch_size, threshold=0.01):
     '''train the Neural Net using Adam as optimizer and an MSE loss'''
-    #optimizer=tc.optim.SGD(model.parameters(),lr)
     optimizer=tc.optim.Adam(model.parameters(),lr)
     criterion= tc.nn.MSELoss()
     training_errors=[]
     if tc.cuda.is_available():
+        tc.cuda.empty_cache()
         model.cuda()
         train_data = train_data.cuda()
     
@@ -27,8 +27,10 @@ def train_model_Adam( model, train_data, label, max_epochs, lr, mini_batch_size,
             tc.cuda.empty_cache()
         for i in range(0,train_data.size(0),mini_batch_size):
             output= model(train_data.narrow(0,i,mini_batch_size))
-            #print(output,tc.LongTensor(np.array([1*label[i:i+mini_batch_size]]).reshape(-1,1)))
-            loss= criterion(output,tc.FloatTensor(np.array([1*label[i:i+mini_batch_size]]).reshape(-1,1)))
+            temp=tc.FloatTensor(np.array([1*label[i:i+mini_batch_size]]).reshape(-1,1))
+            
+            temp = temp.cuda()
+            loss= criterion(output,temp)
             model.zero_grad()
             loss.backward()
             optimizer.step()
@@ -54,6 +56,39 @@ def train_model_Adam( model, train_data, label, max_epochs, lr, mini_batch_size,
     plt.show()
         
     model.cpu()    
+
+
+def train_SimpleNet(dataset, label, w, h, lr, max_epochs, mini_batch_size, dropout):
+    ''' Train a simple net'''
+    n = len(dataset)
+    train_sub_images = [img_crop(dataset[i], w, h) for i in range(n)]
+    train_mask_label = [img_crop(label[i],w,h) for i in range(n)]
+    train_mask_label = from_mask_to_vector(train_mask_label,0.3)
+    train_sub_images = transform_subIMG_to_Tensor(train_sub_images)
+    mean = train_sub_images.mean()
+    std = train_sub_images.std()
+    train_sub_images = (train_sub_images-mean)/std
+    train_sub_images, train_mask_label = reduce_dataset(train_sub_images,train_mask_label)
+    # shuffle images
+    for l in range(10):
+        new_indices= np.random.permutation(len(train_mask_label))
+        train_sub_images=train_sub_images[new_indices]
+        train_mask_label=train_mask_label[new_indices]
+    
+    model = SimpleNet(dropout)
+    
+    mini_batch_rest = train_sub_images.size(0) % mini_batch_size
+    
+    if mini_batch_rest > 0:
+        train_sub_images = train_sub_images.narrow(0,0,train_sub_images.size(0)-mini_batch_rest)
+        train_mask_label = train_mask_label[0:train_sub_images.size(0)]
+        
+        
+        
+
+    train_model_Adam( model, train_sub_images, train_mask_label, max_epochs, lr, mini_batch_size)
+    
+    return model
     
 def train_UNet(training_directory, lr, max_epochs, mini_batch_size, nb_test, threshold=0.5, 
                do_preprocessing = False, flip_data=True, model=None, model_path = 'Model_UNet/model_CPU.pt'):

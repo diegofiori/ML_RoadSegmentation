@@ -17,6 +17,31 @@ from training_NN import *
 from preprocessing import *
 from dataset import *
 
+def print_image_test_bagging(test_image, models):
+    ''' take a 608 * 608 image. Fonction created for the bagging net'''
+    image_original = test_image
+    test_image = img_crop(test_image,16,16)
+    test_image = transform_subIMG_to_Tensor([test_image])
+    mean=test_image.mean()
+    std= test_image.std()
+    test_image = (test_image-mean)/std
+    predictions=[]
+    for model in models:
+        model.eval()
+        predictions.append(model(test_image).detach().numpy().reshape(-1,))
+    
+    predictions = np.array(predictions).mean(0)
+    predictions = predictions > 0.5
+    # add there the postprocessing
+    predictions = post_processing(predictions,27,8,3,3,38)
+    ###############################################
+    predictions=label_to_img(608, 608, 16, 16, predictions)
+    
+    image = make_img_overlay(image_original, predictions)
+    
+    plt.figure(figsize=(10,10))
+    plt.imshow(image)
+    
 def print_image_test(test_path, img_nb, model, do_prep=True):
     ''' take a 608 * 608 image'''
     dataset = Testset(test_path, 50, do_prep = do_prep, normalize=True)
@@ -129,5 +154,60 @@ def create_submission_DeepNet(root_dir, model, name_file, do_postprocess=False):
     for i in range(50):
         plt.imsave( "prediction_"+str(i+1)+".png", list_of_masks[i], cmap = matplotlib.cm.gray)
         list_of_string_names.append("prediction_" + str(i+1) + ".png")
+    # create file submission
+    masks_to_submission(name_file, *list_of_string_names)
+    
+def create_submission(test_data, models, w, h, name_file, prediction_training_dir, normalize=True):
+    ''' the function takes as input the test data and the models used for prediction. 
+    If a list of model is given, the prediction will be done with majority vote. 
+    
+    The function is written explicitly for prediction using SimpleNet model.
+    
+    test_data: list of images.
+    
+    models: list of models or single model
+    
+    w, h: width and high of the patches'''
+    
+    # from list to Tensor
+    w_im, h_im,_ = test_data[0].shape
+    test_data = [img_crop(test_data[k], w, h) for k in range(len(test_data))]
+    
+    test_data = transform_subIMG_to_Tensor(test_data)
+    
+    if normalize:
+        
+        test_data = (test_data-test_data.mean())/test_data.std()
+    
+    try :
+        nb_models = len(models)
+        prediction = [] 
+        for i in range(nb_models):
+            models[i].eval()
+            prediction.append((models[i](test_data)).detach().numpy())
+            
+        prediction = np.array(prediction)
+        prediction = (prediction.sum(0)/nb_models > 0.5)*1
+    
+    except:
+        
+        prediction = models(test_data).detach().numpy()
+        
+        prediction = 1*(prediction > 0.5)
+     
+    prediction = prediction.reshape(-1,)
+    
+    nb_patches = int(w_im*h_im/(w*h))
+    nb_images =int(prediction.shape[0]/nb_patches)
+    list_of_mask = [prediction[i*nb_patches:(i+1)*nb_patches ] for i in range(nb_images)]
+    for k in range(len(list_of_mask)):
+        list_of_mask[k] = post_processing(list_of_mask[k],27,8,3,3,38)
+    # from patch to image
+    list_of_masks=[label_to_img(w_im, h_im, w, h, list_of_mask[k]) for k in range(nb_images)]
+    list_of_string_names = []
+    for i,gt_image in enumerate(list_of_masks):
+        plt.imsave(prediction_training_dir+f"prediction_{i+1}.png",gt_image, cmap=matplotlib.cm.gray)
+        list_of_string_names.append(prediction_training_dir+"prediction_" + str(i+1) + ".png")
+    
     # create file submission
     masks_to_submission(name_file, *list_of_string_names)

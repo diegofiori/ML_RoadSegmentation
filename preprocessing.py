@@ -7,6 +7,7 @@ from scipy import ndimage
 from PIL import Image
 from helpers_img import *
 from sklearn.cluster import KMeans
+from sklearn import preprocessing as prp
 
 def rotation(orig, gts, diagonal=False):
     ks=[90,180,270]

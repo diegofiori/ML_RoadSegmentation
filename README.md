@@ -53,7 +53,7 @@ Contains the function used to:
 
 ### <a name="cnn"></a>Neural Nets
 ```NeuralNets.py```: contains the classes fot the *Simple Net*, the *U-Net* and the *Deep Net*.
-```Bagging_Net.py```: contains the function used to run the bootstrap-like neural net.
+```Bagging_Net.py```: contains the functions used to run the bootstrap-like neural net.
 
 The following notebooks can be used to define and run the models:
 + Simple Net: ```Cross_Validation_regression.ipynb```
@@ -61,7 +61,7 @@ The following notebooks can be used to define and run the models:
 + U-Net:  ```U-Net.ipynb```,
 + Deep Net: ```RUN.ipynb```
 
-Folders with the models: ```Model_UNet.zip```,```Models_Bagging_Net.zip```,```Model_DeepNet.zip```
+Folder with the models created: ```Models```
 
 ### <a name="pp"></a>Postprocessing
 ```Post_processing.py```

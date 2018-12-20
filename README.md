@@ -11,13 +11,6 @@ CrowdAI team name: LaVolpeilFioreEilColosso
 
 ## Architecture
 
-A data folder with the following structure must be created:
-
-```
-training/
-test_set_images/
-```
-
 The files created and the functions developed are presented in the following sections:
 
 * [Helpers](#helpers)
